@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../resources/pilot.css">
+    </head>
+
+    <body>
+
+        <header id="header" style="margin-top: -1.5cm">
+            <p>LEADERSHIP ASSESSMENT REPORT	| {{ dict_candidate['name'] }} | {{ date }}</p>
+        </header>
+
+    <!-- cover pic -->
+
+        <article id="cover">
+            <section>
+                <div class="front-page-text">
+                    <p>LEADERSHIP ASSESSMENT REPORT</p>
+                    <br>
+                    <p>{{ dict_candidate['name']|upper }}</p>
+                    <p>{{ dict_candidate['company_name']|upper }}</p>
+                    <p>{{ date }}</p>
+                </div>
+            </section>
+        </article>
+
+    <!-- content page -->
+        
+        <article style="page-break-before: always">
+            <section>
+                <h2>Contents</h2>
+                <ul class="toc">
+                    <li><a href="#page1" class="custom-link">INTRODUCTION</a></li>
+                    <li><a href="#page2" class="custom-link">OVERVIEW</a></li>
+                    <li><a href="#page3" class="custom-link">FOCUS AREAS</a></li>
+                    <li><a href="#page4" class="custom-link">SKILLS</a></li>
+                    <li><a href="#page5" class="custom-link">LEADERSHIP SKILLS</a></li>
+                    <li><a href="#page6" class="custom-link">KEY PERFORMANCE STRENGTHS</a></li>
+                    <li><a href="#page7" class="custom-link">KEY IMPROVEMENT OPPORTUNITIES</a></li>
+                    <li><a href="#page8" class="custom-link">DISCLAIMER AND COPYRIGHT</a></li>
+                </ul>
+            </section>
+        </article>
+
+    <!-- summary page -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page1">INTRODUCTION</h2>
+                <p>This Leadership Report has been specifically crafted to assist you in navigating the process of development planning. Its purpose is to help you integrate the outcomes from the EdMyst Assessment process into a comprehensive development plan. Whether used independently or alongside a formal coaching process, this report will prove effective.</p>
+                <p>Focused on your workplace performance, the Leadership Report examines both strengths and improvement opportunities. The strengths encompass the qualities that shape the impression you leave on others and enable you to function optimally. On the other hand, the improvement opportunities refer to behavioral tendencies that could potentially undermine your performance, impeding your effectiveness and eroding the quality of your relationships with customers, colleagues, and friends.</p>
+                <p>The primary goal of this report is to facilitate an understanding of your performance potential and identify any barriers that may hinder your achievements. As you review the information, it is important to bear in mind three key points. First, not every statement may accurately reflect your self-perception. Second, strengths and weaknesses are inherent to everyone, and any score can have both positive and negative implications on performance. Lastly, focus on the overall themes presented in the report rather than getting caught up in individual details.</p>
+                <p>There are three ways in which this report can be utilized. Firstly, it provides a snapshot of your interpersonal performance within the workplace. Secondly, it serves as a tool to evaluate the alignment between your skills and the organization's expectations. Finally, it acts as a guide for contemplating on performance improvement. When interpreting the results, it is essential to consider your own aspirations and goals, rather than assessing them in absolute terms.</p>
+            </section>
+        </article>      
+    
+    <!-- overview page -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page2">OVERVIEW</h2>
+                    <p>
+                        {% for skill in dict_bottom_top_skills['top_skills'] %}
+                            {{ dict_bottom_top_skills_text['top_skills'][skill]["Overview-Performance strength"] }}
+                        {% endfor %} 
+                    </p>
+                    <p>
+                        However, 
+                        {% for skill in dict_bottom_top_skills['bottom_skills'] %}
+                            {% if loop.index == 1 %}
+                                {% set sentence = dict_bottom_top_skills_text['bottom_skills'][skill]["Overview-Improvement Opportunities"] %}
+                                {% set first_word = sentence.split()[0] %}
+                                {% set rest_of_sentence = sentence.split()[1:] | join(' ') %}
+                                {{ first_word.lower() }} {{ rest_of_sentence }}                            
+                            {% else %}
+                                {{ dict_bottom_top_skills_text['bottom_skills'][skill]["Overview-Improvement Opportunities"] }}
+                            {% endif %}
+                        {% endfor %} 
+                        Leadership development programs, mentorship, and coaching can also provide valuable guidance and resources to overcome these challenges and further develop these essential leadership skills.
+                    </p>
+                <p></p>
+            </section>
+        </article>      
+
+    <!-- spider plot page -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page3">FOCUS AREAS</h2>
+                <img src="../resources/temp/focus_area_spider_plot.jpg" id="spider">
+            </section>
+        </article>  
+        
+    <!-- bar charts page -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page4">SKILLS</h2>
+                <div class="vertical-flexbox">
+                    <img src="../resources/temp/Architect.jpg" class="bar-charts">
+                    <img src="../resources/temp/Catalyst.jpg" class="bar-charts">
+                    <img src="../resources/temp/Coach.jpg" class="bar-charts">
+                    <img src="../resources/temp/Visionary.jpg" class="bar-charts">
+                </div>
+            </section>
+        </article> 
+
+    <!-- Leadership skills and the vertical gauge graphs -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page5">LEADERSHIP SKILLS</h2>
+                <p>Leadership skills are the abilities and qualities that enable individuals to guide, inspire, and influence others towards achieving a common goal or vision. These skills are essential for effective leadership and can be developed and honed through experience, training, and self-reflection.</p>
+                {% for focus_area, skill_dict in dict_all_skills_description|dictsort %}
+                    <h2>{{ focus_area.title() }}</h2>
+                    {% for skill, description in skill_dict|dictsort %}
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>{{ skill.title() }}</h4>
+                                <p>{{ description }}</p>
+                            </div>
+                            <img src="../resources/temp/{{ skill }}.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    {% endfor %}
+                {% endfor %}
+            </section>
+        </article> 
+
+    <!-- Key Performance Strengths -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page6">KEY PERFORMANCE STRENGTHS</h2>
+                {% for skill in dict_bottom_top_skills['top_skills']|sort %}
+                    <h3>{{ skill.title() }}</h3>
+                    <p class="medium-blue-text">{{ dict_bottom_top_skills_text['top_skills'][skill]['Performance Strengths'][0] }}</p>
+                    <ul>
+                        {% for bullet in dict_bottom_top_skills_text['top_skills'][skill]['Performance Strengths'][1:] %}
+                            <li>{{ bullet }}</li>
+                        {% endfor %}
+                    </ul>
+                    <p class="medium-blue-text">To help you reflect on your strength, here are few self-reflection questions:</p>
+                    <ul>
+                        {% for bullet in dict_bottom_top_skills_text['top_skills'][skill]['Self-reflection Questions'] %}
+                            <li>{{ bullet }}</li>
+                        {% endfor %}
+                    </ul>
+                    <p class="medium-blue-text">To help you leverage your strength, here are some suggestions:</p>
+                    <ul>
+                        {% for bullet in dict_bottom_top_skills_text['top_skills'][skill]['Self-Development Tips - Strengths'] %}
+                            <li>{{ bullet }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </section>
+        </article>       
+        
+    <!-- KEY IMPROVEMENT OPPORTUNITIES -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page7">KEY IMPROVEMENT OPPORTUNITIES</h2>
+                {% for skill in dict_bottom_top_skills['bottom_skills']|sort %}
+                    <h3>{{ skill.title() }}</h3>
+                    <p class="medium-blue-text">{{ dict_bottom_top_skills_text['bottom_skills'][skill]['Improvement Opportunities'][0] }}</p>
+                    <ul>
+                        {% for bullet in dict_bottom_top_skills_text['bottom_skills'][skill]['Improvement Opportunities'][1:] %}
+                            <li>{{ bullet }}</li>
+                        {% endfor %}
+                    </ul>
+                    <p class="medium-blue-text">To help you reflect on your development area, here are few self-reflection questions:</p>
+                    <ul>
+                        {% for bullet in dict_bottom_top_skills_text['bottom_skills'][skill]['Self-reflection Questions'] %}
+                            <li>{{ bullet }}</li>
+                        {% endfor %}
+                    </ul>
+                    <p class="medium-blue-text">To help you develop in this area, here are some suggestions:</p>
+                    <ul>
+                        {% for bullet in dict_bottom_top_skills_text['bottom_skills'][skill]['Self-Development Tips - Areas of Development'] %}
+                            <li>{{ bullet }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </section>
+        </article>    
+
+    <!-- Disclaimer & Copyright -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h3 style="text-decoration: underline; font-weight: bold; color: #106ba8;" id="page8">Disclaimer and Copyright</h3>
+                <br>
+                <h4 style="font-weight: bold;">Disclaimer</h4>
+                <p>This report is a property of {{ dict_candidate['company_name'] }} and the information provided in the report is to be used only by the individual or entity to which it is addressed, else you are hereby notified that any dissemination, distribution or copying of this communication is strictly prohibited. The interpretive information contained in this report should be viewed as only one source of hypotheses about the individual/ group being evaluated. No decisions should be based solely on the information contained in this report. Any interpretation of this report should take into account ALL relevant input such as actual experience, skills, interests, abilities, the market being addressed and product being sold. This material should be integrated with all other sources of information in reaching professional decisions about this individual. This report is confidential and intended for use by qualified professionals only. </p>
+                <br>
+                <h4 style="font-weight: bold;">Intellectual Property</h4>
+                <p>The Content and Services of {{ dict_candidate['company_name'] }}, as well as their selection and arrangement, are protected by copyright, trademark, patent, and/or other intellectual property laws, and any unauthorized use of the Content or Services may violate such laws and these Terms of Use. Except as expressly implied in these Terms of Use, {{ dict_candidate['company_name'] }} does not grant any express rights to use the Content and/or Services. You have agreed not to copy, republish, frame, download, transmit, modify, rent, lease, loan, sell, assign, distribute, license, sublicense, reverse engineer, or create derivative works based on the Site, its Content, or its Services or their selection and arrangement, except as expressly authorized in these Terms of Use. In addition, you have agreed not to use any data mining, robots, or similar data gathering and extraction methods in connection with the {{ dict_candidate['company_name'] }} database.</p>
+            </section>
+        </article>
+
+    </body>
+</html>
