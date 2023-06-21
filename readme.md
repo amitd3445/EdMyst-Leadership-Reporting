@@ -3,7 +3,7 @@ There are two python files used to generate the leadership assessment report:
 The first file is called parser.py, which receieves a path to a csv file, which contains all of the textual data associated with generating the assessment report. It parses the data into two json files that that are used during the report generation process
 
 The second file is called generate_pdf_report.py, which receieves a json payload contianing data tied to the user who has taken the report and their assessment scores. This is the format of the json payload:
-
+```json
   {
       "Purpose-driven": 6.5, 
       "Self-directedness": 7.5, 
@@ -46,4 +46,5 @@ The second file is called generate_pdf_report.py, which receieves a json payload
           "company_name": "company name"
       }
   }
+```
 The script will utilize both the assessment scores, candidate profile information, and the dynamic content from the two json files in order to populate the assessment report
