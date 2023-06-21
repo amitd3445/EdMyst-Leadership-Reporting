@@ -67,3 +67,9 @@ def parse_data(
 
     with open(path_skills_json_output, "w") as json_file:
         json.dump(skills_dict, json_file)
+
+if __name__ == '__main__':
+    input_file = pathlib.Path(__file__).parent.parent / 'resources' / 'report_text.csv'
+    focus_file = pathlib.Path(__file__).parent.parent / 'resources' / 'focus_area.json'
+    skill_file = pathlib.Path(__file__).parent.parent / 'resources' / 'skills.json'
+    parse_data(input_file, focus_file, skill_file)
