@@ -11,9 +11,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 from matplotlib import pyplot as plt
-from matplotlib import cm
 import matplotlib.colors as mcolors
-import matplotlib.patches as patches
 from PIL import Image
 import weasyprint
 from jinja2 import Environment, FileSystemLoader
@@ -139,7 +137,7 @@ def _modify_scores(
 def _generate_bar_charts(dict_scores: Dict[str, Dict[str, Union[float, int]]]) -> None:
     """
     Creates bar graphs for all focus areas based on the individual's self-assessment and save the
-    static image to the resources/temp folder
+    static image to the tmp folder
 
     Args:
         param1(Dict[str, Dict[str, int | str]]): The candidate's profile and assessment results
@@ -151,8 +149,7 @@ def _generate_bar_charts(dict_scores: Dict[str, Dict[str, Union[float, int]]]) -
         filename_ending = focus_area + ".jpg"
         path_focus_area = (
             pathlib.Path(__file__).parent.parent
-            / "resources"
-            / "temp"
+            / "tmp"
             / filename_ending
         )
 
@@ -244,8 +241,7 @@ def _generate_spider_plot(dict_scores: Dict[str, Dict[str, Union[float, int]]]) 
 
     path_spiderplot_graph = (
         pathlib.Path(__file__).parent.parent
-        / "resources"
-        / "temp"
+        / "tmp"
         / "focus_area_spider_plot.jpg"
     )
     plt.savefig(path_spiderplot_graph, format="jpg")
@@ -367,7 +363,7 @@ def _generate_colorbar_plots(
 
             file_name = skill + ".jpg"
             path_skill_gauge_chart = (
-                pathlib.Path(__file__).parent.parent / "resources" / "temp" / file_name
+                pathlib.Path(__file__).parent.parent / "tmp" / file_name
             )
 
             ax.set_xticks([])
@@ -582,7 +578,7 @@ def _delete_temp_files() -> None:
     Returns:
         None
     """
-    directory = pathlib.Path(__file__).parent.parent / "resources" / "temp"
+    directory = pathlib.Path(__file__).parent.parent / "tmp"
 
     # Get a list of all files in the directory
     file_list = os.listdir(directory)
