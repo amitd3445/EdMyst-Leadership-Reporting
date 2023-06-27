@@ -1,8 +1,27 @@
-There are two python files used to generate the leadership assessment report:
+Introduction:
+    A REST API designed to generate PDF reports based on the recruitment assessment scores and the candidate's profile. Designed to be deployed on AWS. The PDF report will be saved in the results folder. All static images used to design the PDF report will be deleted after the PDF is built.
 
-The first file is called parser.py, which receieves a path to a csv file, which contains all of the textual data associated with generating the assessment report. It parses the data into two json files that that are used during the report generation process
+Base URL:
+    /_reporting/
 
-The second file is called generate_pdf_report.py, which receieves a json payload contianing data tied to the user who has taken the report and their assessment scores. This is the format of the json payload:
+Error Handling:
+    Raises an error if the input is not a nested dictionaries with values of type float, int, or string. 
+    Returns a 500 error along with the message "Input must be nested dictionaries with values as either string, int, or float"
+
+Endpoint:
+    /generate_interview_questions_pdf
+Description:
+    generates the pdf report that customizes the interview questions for a given candidate
+URL: 
+    /candidate_reporting/generate_interview_questions_pdf
+HTTP Method: 
+    POST
+Request Parameters:
+    None
+Request Headers:
+    Content-type: Application/JSON
+Request Body:
+    A json blob of this format:
 ```json
   {
       "Purpose-driven": 6.5, 
@@ -47,4 +66,4 @@ The second file is called generate_pdf_report.py, which receieves a json payload
       }
   }
 ```
-The script will utilize both the assessment scores, candidate profile information, and the dynamic content from the two json files in order to populate the assessment report
+The script will utilize both the assessment scores, candidate profile information, and the dynamic content from the two json files in order to populate the leadership report
