@@ -448,7 +448,7 @@ def _generate_html(
     rendered_template = template.render(payload)
 
     path_rendered_template = (
-        pathlib.Path(__file__).parent.parent / "templates" / "rendered_template.html"
+        pathlib.Path(__file__).parent.parent / "tmp" / "rendered_template.html"
     )
 
     with open(path_rendered_template, "w") as file:
@@ -560,7 +560,7 @@ def _generate_pdf(dict_candidate: Dict[str, str]) -> None:
     report_filename += ".pdf"
 
     path_html_file = (
-        pathlib.Path(__file__).parent.parent / "templates" / "rendered_template.html"
+        pathlib.Path(__file__).parent.parent / "tmp" / "rendered_template.html"
     )
     path_pdf_report = pathlib.Path(__file__).parent.parent / "results" / report_filename
 
@@ -588,10 +588,6 @@ def _delete_temp_files() -> None:
         if os.path.isfile(file_path):
             os.remove(file_path)
 
-    path_html_file = (
-        pathlib.Path(__file__).parent.parent / "templates" / "rendered_template.html"
-    )
-    os.remove(path_html_file)
 
 if __name__ == '__main__':
     dict_data =   {
