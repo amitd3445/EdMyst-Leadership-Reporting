@@ -409,7 +409,6 @@ def _generate_final_report(
     Returns:
         None
     """
-    dict_bottom_top_skills = _get_bottom_and_top_skills(dict_scores)
     _generate_html(dict_candidate, dict_scores)
     _generate_pdf(dict_candidate)
 
