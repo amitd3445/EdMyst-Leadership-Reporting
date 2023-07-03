@@ -3,6 +3,7 @@ from textwrap import wrap
 import pathlib
 import json
 import os
+import shutil
 import datetime as dt
 from statistics import mean
 import pandas as pd
@@ -37,23 +38,28 @@ def generate_interview_report(payload: Dict[str, Dict[str, Union[float, int]]]) 
     """
 
     _validate_payload(payload)
-    dict_candidate, dict_scores = _parse_payload(payload)
+    dict_candidate, dict_scores, dict_paths = (
+        payload["candidate_profile"],
+        payload["skill_scores"],
+        payload["paths"],
+    )
     dict_scores = _modify_scores(dict_scores)
     _generate_bar_charts(dict_scores)
     _generate_spider_plot(dict_scores)
     _generate_colorbar_plots(dict_scores)
+    _save_background_pic(dict_paths["background_pic"])
     _generate_final_report(dict_candidate, dict_scores)
-    _delete_temp_files()
+    # _delete_temp_files()
 
 
 def _validate_payload(
-    payload: Dict[str, Union[str, Dict[str, Union[float, int, str]]]]
+    payload: Dict[str, Union[str, Dict[str, Union[float, int, str, None]]]]
 ) -> None:
     """
     Data validation step to make sure that the input is of the right type
 
     Args:
-        param1(Dict[str, Union[str, Dict[str, Union[float, int, str]]]]): The candidate's profile and assessment results
+        param1(Dict[str, Union[str, Dict[str, Union[float, int, str, None]]]]): The candidate's profile and assessment results
 
     Returns:
         None
@@ -62,9 +68,7 @@ def _validate_payload(
         TypeError: Must receieve nested dictionaries as an argument
     """
     if not isinstance(payload, dict):
-        raise TypeError(
-            "Input must be nested dictionaries with values as either string, int, or float"
-        )
+        raise TypeError("Input must be nested dictionaries")
 
     stack = [payload]
     while stack:
@@ -80,30 +84,11 @@ def _validate_payload(
                 isinstance(value, float)
                 or isinstance(value, int)
                 or isinstance(value, str)
+                or value is None
             ):
                 raise TypeError(
-                    "Input must be nested dictionaries with values as either string, int, or float"
+                    "Input must be nested dictionaries with values as either string, int, float, or None"
                 )
-
-
-def _parse_payload(
-    payload: Dict[str, Dict[str, Union[float, int]]]
-) -> Tuple[Dict[str, str], Dict[str, Union[float, int]]]:
-    """
-    Parses the payload and seperates the data into two dictionaries. One represents the candidate's profile,
-    and the other represents the scores
-
-    Args:
-        param(Dict[str, Dict[str, Union[float, int]]]): nested dictionaries of the candidate's profile
-        and assessment scores
-
-    Returns:
-        Tuple[Dict[str, str], Dict[str, Union[float, int]]]: tuple of dictionaries. First entry
-        is a dictionary representing the candidate's profile, and the second entry is a dictionary
-        representing the scores received
-    """
-
-    return (payload.pop("candidate_profile"), payload)
 
 
 def _modify_scores(
@@ -147,11 +132,7 @@ def _generate_bar_charts(dict_scores: Dict[str, Dict[str, Union[float, int]]]) -
     """
     for focus_area, dict_skills in dict_scores.items():
         filename_ending = focus_area + ".jpg"
-        path_focus_area = (
-            pathlib.Path(__file__).parent.parent
-            / "tmp"
-            / filename_ending
-        )
+        path_focus_area = pathlib.Path(__file__).parent / "tmp" / filename_ending
 
         categories = ["\n".join(category.split(" ")) for category in dict_skills.keys()]
         values = list(dict_skills.values())
@@ -237,12 +218,17 @@ def _generate_spider_plot(dict_scores: Dict[str, Dict[str, Union[float, int]]]) 
         else:
             xytext = (-8, 0)
 
-        ax.annotate(np.round(list_scores[i],1), xy=(x, y), xytext=xytext, textcoords='offset points', ha='center', va='center')
+        ax.annotate(
+            np.round(list_scores[i], 1),
+            xy=(x, y),
+            xytext=xytext,
+            textcoords="offset points",
+            ha="center",
+            va="center",
+        )
 
     path_spiderplot_graph = (
-        pathlib.Path(__file__).parent.parent
-        / "tmp"
-        / "focus_area_spider_plot.jpg"
+        pathlib.Path(__file__).parent / "tmp" / "focus_area_spider_plot.jpg"
     )
     plt.savefig(path_spiderplot_graph, format="jpg")
 
@@ -362,9 +348,7 @@ def _generate_colorbar_plots(
             ax3.axvspan(score - 0.1, score + 0.1, 0, 1, facecolor="#000000")
 
             file_name = skill + ".jpg"
-            path_skill_gauge_chart = (
-                pathlib.Path(__file__).parent.parent / "tmp" / file_name
-            )
+            path_skill_gauge_chart = pathlib.Path(__file__).parent / "tmp" / file_name
 
             ax.set_xticks([])
             ax2.set_xticks([])
@@ -393,6 +377,26 @@ def _generate_colorbar_plots(
             annotation.remove()
             annotation2.remove()
             annotation3.remove()
+
+
+def _save_background_pic(old_path_background_pic=None) -> None:
+    """
+    Save the background picture to the /tmp folder in order to be referenced by the html file
+
+    Args:
+        optional_arg (pathlib.Path): path to background picture
+
+    Returns:
+        None
+    """
+    # provide a path to the background pic or I'll just assume it's in the resources folder
+    if old_path_background_pic is None:
+        old_path_background_pic = (
+            pathlib.Path(__file__).parent.parent / "resources" / "background.jpg"
+        )
+
+    new_path_background_pic = pathlib.Path(__file__).parent / "tmp" / "background.jpg"
+    shutil.copy(old_path_background_pic, new_path_background_pic)
 
 
 def _generate_final_report(
@@ -448,7 +452,7 @@ def _generate_html(
     rendered_template = template.render(payload)
 
     path_rendered_template = (
-        pathlib.Path(__file__).parent.parent / "tmp" / "rendered_template.html"
+        pathlib.Path(__file__).parent / "tmp" / "rendered_template.html"
     )
 
     with open(path_rendered_template, "w") as file:
@@ -559,9 +563,7 @@ def _generate_pdf(dict_candidate: Dict[str, str]) -> None:
     report_filename = "_".join([name, company, date_today_string])
     report_filename += ".pdf"
 
-    path_html_file = (
-        pathlib.Path(__file__).parent.parent / "tmp" / "rendered_template.html"
-    )
+    path_html_file = pathlib.Path(__file__).parent / "tmp" / "rendered_template.html"
     path_pdf_report = pathlib.Path(__file__).parent.parent / "results" / report_filename
 
     weasyprint.HTML(path_html_file).write_pdf(path_pdf_report)
@@ -577,7 +579,7 @@ def _delete_temp_files() -> None:
     Returns:
         None
     """
-    directory = pathlib.Path(__file__).parent.parent / "tmp"
+    directory = pathlib.Path(__file__).parent / "tmp"
 
     # Get a list of all files in the directory
     file_list = os.listdir(directory)
@@ -589,47 +591,46 @@ def _delete_temp_files() -> None:
             os.remove(file_path)
 
 
-if __name__ == '__main__':
-    dict_data =   {
-      "Purpose-driven": 6.5, 
-      "Self-directedness": 7.5, 
-      "Big Picture Thinking": 7.25, 
-      "Exploring perspectives and alternatives": 4.5, 
-      "Empowering others": 6.0, 
-      "Role Modeling": 8.25, 
-      "Understanding one's emotions": 4.0, 
-      "Self-control and regulation": 6.5, 
-      "Speaking with conviction": 7.5, 
-      "Empathetic": 4.0, 
-      "Motivating and inspiring others": 8.0, 
-      "Coaching": 5.0, 
-      "Resilience": 8.0, 
-      "Energy, passion and optimism": 6.5, 
-      "Courage and risk-taking": 7.0, 
-      "Driving change and innovation": 4.0, 
-      "Dealing with uncertainty": 7.0, 
-      "Instilling Trust": 6.0, 
-      "Openness to feedback": 7.5, 
-      "Collaboration Skills": 4.0, 
-      "Fostering inclusiveness": 5.5, 
-      "Organizational awareness": 6.0, 
-      "Vision Alignment": 4.5, 
-      "Time management and prioritization": 6.0, 
-      "Promoting a culture of respect": 7.0, 
-      "Unconventional approach": 5.0, 
-      "Adaptability": 4.0, 
-      "Attention to detail": 7.0, 
-      "Planning": 6.5, 
-      "Project management": 7.0, 
-      "Critical Thinking": 8.0, 
-      "Strategic Thinking": 7.5, 
-      "Ownership and accountability": 5.5, 
-      "Developing others": 7.0, 
-      "Contextualization of knowledge": 6.0, 
-      "candidate_profile": 
-      {
-          "name": "employee name", 
-          "company_name": "company name"
-      }
-  }
+if __name__ == "__main__":
+    dict_data = {
+        "skill_scores": {
+            "Purpose-driven": 6.5,
+            "Self-directedness": 7.5,
+            "Big Picture Thinking": 7.25,
+            "Exploring perspectives and alternatives": 4.5,
+            "Empowering others": 6.0,
+            "Role Modeling": 8.25,
+            "Understanding one's emotions": 4.0,
+            "Self-control and regulation": 6.5,
+            "Speaking with conviction": 7.5,
+            "Empathetic": 4.0,
+            "Motivating and inspiring others": 8.0,
+            "Coaching": 5.0,
+            "Resilience": 8.0,
+            "Energy, passion and optimism": 6.5,
+            "Courage and risk-taking": 7.0,
+            "Driving change and innovation": 4.0,
+            "Dealing with uncertainty": 7.0,
+            "Instilling Trust": 6.0,
+            "Openness to feedback": 7.5,
+            "Collaboration Skills": 4.0,
+            "Fostering inclusiveness": 5.5,
+            "Organizational awareness": 6.0,
+            "Vision Alignment": 4.5,
+            "Time management and prioritization": 6.0,
+            "Promoting a culture of respect": 7.0,
+            "Unconventional approach": 5.0,
+            "Adaptability": 4.0,
+            "Attention to detail": 7.0,
+            "Planning": 6.5,
+            "Project management": 7.0,
+            "Critical Thinking": 8.0,
+            "Strategic Thinking": 7.5,
+            "Ownership and accountability": 5.5,
+            "Developing others": 7.0,
+            "Contextualization of knowledge": 6.0,
+        },
+        "candidate_profile": {"name": "employee name", "company_name": "company name"},
+        "paths": {"background_pic": None},
+    }
     generate_interview_report(dict_data)
