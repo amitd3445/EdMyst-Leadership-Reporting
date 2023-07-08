@@ -1,31 +1,22 @@
-from typing import Dict, Union, List, Tuple
-from textwrap import wrap
+from graphing import *
+from typing import Dict, Union, List
 import pathlib
 import json
 import os
 import shutil
 import datetime as dt
-from statistics import mean
-import pandas as pd
-import numpy as np
-import matplotlib
-
-matplotlib.use("Agg")
-from matplotlib import pyplot as plt
-import matplotlib.colors as mcolors
-from PIL import Image
 import weasyprint
 from jinja2 import Environment, FileSystemLoader
 
 
-def generate_interview_report(payload: Dict[str, Dict[str, Union[float, int]]]) -> None:
+def generate_interview_report(payload: Dict) -> None:
     """
     Generate the interviewer assessment report by parsing the payload
 
     The report will analyze and provide relevant questions based on the strengths and weaknesses of the candidate
 
     Args:
-        param1(Dict[str, Dict[str, int | str]]): The candidate's profile and assessment results
+        param1(Dict): The candidate's profile and assessment results
 
     Returns:
         None
@@ -38,54 +29,298 @@ def generate_interview_report(payload: Dict[str, Dict[str, Union[float, int]]]) 
     """
 
     _validate_payload(payload)
-    
-    #dict_scores = _modify_scores(dict_scores)
-    #_generate_bar_charts(dict_scores)
-    #_generate_spider_plot(dict_scores)
-    #_generate_colorbar_plots(dict_scores)
-    #_save_background_pic(dict_paths["background_pic"])
-    #_generate_final_report(dict_candidate, dict_scores)
-    # _delete_temp_files()
+    dict_payload = _parse_payload(payload)
+    dict_payload["skills"] = _modify_scores(dict_payload["skills"])
+    _generate_all_graphics(dict_payload)
+    _save_background_pic()
+    _generate_final_report(dict_payload)
+    #_delete_temp_files()
 
 
-def _validate_payload(
-    payload: Dict[str, Union[str, Dict[str, Union[float, int, str, bool, None]]]]
-) -> None:
+def _validate_payload(payload: Dict) -> None:
     """
     Data validation step to make sure that the input is of the right type
 
     Args:
-        param1(Dict[str, Union[str, Dict[str, Union[float, int, str, bool, None]]]]): The candidate's profile and assessment results
+        param (Dict): A JSON blob representing the data to be processed.
 
     Returns:
         None
 
     Raises:
-        TypeError: Must receieve nested dictionaries as an argument
+        TypeError: Must receieve dictionary which specific keys
     """
+    # json blob
     if not isinstance(payload, dict):
-        raise TypeError("Input must be nested dictionaries")
+        raise TypeError("Input must be a dictionary")
 
-    stack = [payload]
-    while stack:
-        current_dict = stack.pop()
+    # name
+    if "Candidate" not in payload or any(
+        [
+            x not in payload["Candidate"] 
+            for x in [
+                "name",
+                "company"
+            ]
+        ]
+    ):
+        raise TypeError("candidate profile keys are missing")
 
-        for key, value in current_dict.items():
-            if not isinstance(key, str):
-                raise TypeError("Input must be nested dictionaries with keys as string")
+    # pace
+    if "speech_rate" not in payload or any(
+        [
+            x not in payload["speech_rate"]
+            for x in [
+                "assessment",
+                "timestamp_graph_data",
+                "measured",
+                "inference",
+                "recommended",
+            ]
+        ]
+    ):
+        raise TypeError("pace keys are missing")
 
-            if isinstance(value, dict):
-                stack.append(value)
-            elif not (
-                isinstance(value, float)
-                or isinstance(value, int)
-                or isinstance(value, str)
-                or isinstance(value, bool)
-                or value is None
-            ):
-                raise TypeError(
-                    "Input must be nested dictionaries with values as either string, int, float, bool, or None"
-                )
+    # pause
+    if "praat_output" not in payload or any(
+        [
+            x not in payload["praat_output"]
+            for x in [
+                "average_pause_length",
+                "pauses_count_sentence",
+                "assessment",
+                "articulation_rate",
+                "pauses_count_strategic",
+                "pauses_count_sensory",
+                "phonation_time",
+                "speech_rate_syllables",
+                "pauses_count_per_min",
+                "pauses_count_long",
+                "inference",
+                "pauses_count_transition",
+            ]
+        ]
+    ):
+        raise TypeError("pause keys are missing")
+
+    # fillers
+    if "filler_words" not in payload or any(
+        [
+            x not in payload["filler_words"]
+            for x in [
+                "assessment",
+                "analysis",
+                "result",
+                "total_words",
+                "recommendation",
+                "data",
+            ]
+        ]
+    ):
+        raise TypeError("filler word keys are missing")
+
+    # repeated words
+    if "repeated_words" not in payload or any(
+        [
+            x not in payload["repeated_words"]
+            for x in ["assessment", "result", "total_words", "analysis", "data"]
+        ]
+    ):
+        raise TypeError("repeated word keys are missing")
+
+    # eye contact
+    if "looking_at_camera" not in payload or any(
+        [
+            x not in payload["looking_at_camera"]
+            for x in [
+                "assessment",
+                "average_percentage",
+                "result",
+                "inference",
+                "recommendation",
+                "data",
+            ]
+        ]
+    ):
+        raise TypeError("eye contact keys are missing")
+
+    # smile
+    if "smiling" not in payload or any(
+        [
+            x not in payload["smiling"]
+            for x in [
+                "assessment",
+                "average_percentage",
+                "result",
+                "inference",
+                "recommendation",
+                "data",
+            ]
+        ]
+    ):
+        raise TypeError("smiling keys are missing")
+
+    # sentiment
+    if "sentiment" not in payload or any(
+        [
+            x not in payload["sentiment"]
+            for x in ["assessment", "measured", "inference", "recommended"]
+        ]
+    ):
+        raise TypeError("sentiment keys are missing")
+
+    # volume
+    if "power_db" not in payload or any(
+        [x not in payload["power_db"] for x in ["assessment", "inference", "data"]]
+    ):
+        raise TypeError("volume keys are missing")
+
+    # skills
+    if "recruiter_skills" not in payload:
+        raise TypeError()
+    else:
+        path_focus_area = (
+            pathlib.Path(__file__).parent.parent / "resources" / "focus_area.json"
+        )
+        with open(path_focus_area) as file:
+            dict_focus_area = json.load(file)
+
+        list_skills = [
+            skill
+            for list_of_skills in dict_focus_area.values()
+            for skill in list_of_skills
+        ]
+        for skill in list_skills:
+            if skill not in payload["recruiter_skills"]:
+                raise TypeError(f"missing {skill} from recruiter skill list")
+
+
+def _parse_payload(payload: Dict) -> Dict:
+    """
+    Parses the json blob representing the data to be processed in order to return a dictionary containing the relevant data
+
+    Args:
+        param (Dict): A JSON blob representing the data to be processed.
+
+    Returns:
+        Dict: a dictionary containing the relevant data used to generate the report
+    """
+    dict_parsed_data = {}
+
+    # candidate profile
+    dict_parsed_data["candidate_profile"] = {}
+    dict_parsed_data["candidate_profile"]["name"] = payload["Candidate"]["name"]
+    dict_parsed_data["candidate_profile"]["company_name"] = payload["Candidate"]["company"]
+
+    # pace
+    list_pace_keys = [
+        "assessment",
+        "timestamp_graph_data",
+        "measured",
+        "inference",
+        "recommended",
+    ]
+    dict_parsed_data["pace"] = {
+        key: payload["speech_rate"][key] for key in list_pace_keys
+    }
+
+    # pause
+    list_pause_keys = [
+        "average_pause_length",
+        "pauses_count_sentence",
+        "assessment",
+        "articulation_rate",
+        "pauses_count_strategic",
+        "pauses_count_sensory",
+        "phonation_time",
+        "speech_rate_syllables",
+        "pauses_count_per_min",
+        "pauses_count_long",
+        "inference",
+        "pauses_count_transition",
+    ]
+    dict_parsed_data["pause"] = {
+        key: payload["praat_output"][key] for key in list_pause_keys
+    }
+
+    # fillers
+    list_filler_keys = [
+        "assessment",
+        "analysis",
+        "result",
+        "total_words",
+        "recommendation",
+        "data",
+    ]
+    dict_parsed_data["fillers"] = {
+        key: payload["filler_words"][key] for key in list_filler_keys
+    }
+
+    # repeated words
+    list_repeated_word_keys = [
+        "assessment",
+        "result",
+        "total_words",
+        "analysis",
+        "data",
+    ]
+    dict_parsed_data["repeated_words"] = {
+        key: payload["repeated_words"][key] for key in list_repeated_word_keys
+    }
+
+    # eye contact
+    list_eye_contact_keys = [
+        "assessment",
+        "average_percentage",
+        "result",
+        "inference",
+        "recommendation",
+        "data",
+    ]
+    dict_parsed_data["eye_contact"] = {
+        key: payload["looking_at_camera"][key] for key in list_eye_contact_keys
+    }
+
+    # smile
+    list_smile_keys = [
+        "assessment",
+        "average_percentage",
+        "result",
+        "inference",
+        "recommendation",
+        "data",
+    ]
+    dict_parsed_data["smile"] = {
+        key: payload["smiling"][key] for key in list_smile_keys
+    }
+
+    # sentiment
+    list_sentiment_keys = ["assessment", "measured", "inference", "recommended"]
+    dict_parsed_data["sentiment"] = {
+        key: payload["sentiment"][key] for key in list_sentiment_keys
+    }
+
+    # volume
+    list_volume_keys = ["assessment", "inference", "data"]
+    dict_parsed_data["volume"] = {
+        key: payload["power_db"][key] for key in list_volume_keys
+    }
+
+    # skills
+    path_focus_area = (
+        pathlib.Path(__file__).parent.parent / "resources" / "focus_area.json"
+    )
+    with open(path_focus_area) as file:
+        dict_focus_area = json.load(file)
+
+    list_skills = [
+        skill for list_of_skills in dict_focus_area.values() for skill in list_of_skills
+    ]
+    dict_parsed_data["skills"] = {
+        key: payload["recruiter_skills"][key] for key in list_skills
+    }
+
+    return dict_parsed_data
 
 
 def _modify_scores(
@@ -95,7 +330,7 @@ def _modify_scores(
     Modify the scores dictionary to make the data more manageable
 
     Args:
-        param1(Dict[str, Dict[str, int | str]]): The candidate's profile and assessment results
+        param1(Dict[str, Dict[str, int | str]]): The candidate's assessment results
 
     Returns:
         Dict[str, Dict[str, Union[float, int]]]:
@@ -116,264 +351,159 @@ def _modify_scores(
     return dict_modified_scores
 
 
-def _generate_bar_charts(dict_scores: Dict[str, Dict[str, Union[float, int]]]) -> None:
+def _generate_all_graphics(paylaod):
     """
-    Creates bar graphs for all focus areas based on the individual's self-assessment and save the
-    static image to the tmp folder
+    Create all graphics for the report and save them to the /tmp folder for future use. Graphing
+    functions are imported from the graphing.py module
 
     Args:
-        param1(Dict[str, Dict[str, int | str]]): The candidate's profile and assessment results
+        param1(Dict):
 
     Returns:
         None
     """
-    for focus_area, dict_skills in dict_scores.items():
-        filename_ending = focus_area + ".jpg"
-        path_focus_area = pathlib.Path(__file__).parent / "tmp" / filename_ending
 
-        categories = ["\n".join(category.split(" ")) for category in dict_skills.keys()]
-        values = list(dict_skills.values())
+    # generate bar chart for focus area/skills
+    generate_skill_score_bar_charts(paylaod["skills"])
 
-        fig, ax = plt.subplots(figsize=(14, 6))
-        ax_bar = ax.bar(categories, values, alpha=0.2)
+    # generate spider plot for focus area
+    generate_focus_area_spider_plot(paylaod["skills"])
 
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.spines["left"].set_visible(False)
-        ax.spines["bottom"].set_position(("outward", 5))
-        ax.bar_label(ax_bar, fontsize=12, padding=5)
+    # generate color bar for all skills
+    generate_skill_score_colorbar_plots(paylaod["skills"])
 
-        plt.rcParams["font.family"] = "sans-serif"
-        plt.rcParams["font.sans-serif"] = "Helvetica"
-        plt.rcParams["axes.edgecolor"] = "#333F4B"
-        plt.rcParams["axes.linewidth"] = 0.8
-        plt.rcParams["xtick.color"] = "#333F4B"
-
-        plt.title(focus_area, fontsize=25)
-        plt.xticks(fontsize=12)
-        plt.yticks([])
-        plt.tight_layout()
-        plt.savefig(path_focus_area, format="jpg")
-        plt.clf()
-
-    matplotlib.pyplot.close()
-
-
-def _generate_spider_plot(dict_scores: Dict[str, Dict[str, Union[float, int]]]) -> None:
-    """
-    Creates spidersplot graph that displays the self-assessment scores
-
-    Args:
-        param(Dict[str, Dict[str, Union[float, int]]]): a nested dictionary that corresponds to
-        the score receieved for each focus area/skill
-
-    Returns:
-        None
-    """
-    categories = ["\n".join(wrap(category, 15)) for category in dict_scores.keys()]
-
-    list_scores = [mean(skills.values()) for skills in dict_scores.values()]
-    list_scores = list_scores + list_scores[:1]
-
-    N = len(categories)
-    PI = 3.14592
-
-    # define color scheme for up to 10 comparisons
-    color = "#429bf4"  # (Blue)
-
-    angles = [n / float(N) * 2 * PI for n in range(N)]
-    angles += angles[:1]
-
-    plt.rc("figure", figsize=(10, 10))
-
-    ax = plt.subplot(1, 1, 1, polar=True)
-
-    ax.set_theta_offset(PI / 2)
-    ax.set_theta_direction(-1)
-    ax.set_ylim(0, 10)
-
-    plt.xticks(angles[:-1], categories, color="black", size=10)
-    ax.tick_params(axis="x", pad=10)
-
-    ax.set_rlabel_position(0)
-    plt.yticks([1, 10], ["1", "10"], color="black", size=10)
-    plt.ylim(0, 10)
-
-    ax.plot(angles, list_scores, color=color, linewidth=1, linestyle="solid")
-    ax.fill(angles, list_scores, color=color, alpha=0.3)
-
-    for i, (angle, radius) in enumerate(zip(angles[:-1], list_scores[:-1])):
-        x = angle
-        y = radius
-
-        if x >= 0 and x <= 1.5:
-            xytext = (0, 8)
-        elif x <= 3:
-            xytext = (8, 0)
-        elif x < 4.5:
-            xytext = (0, -8)
-        else:
-            xytext = (-8, 0)
-
-        ax.annotate(
-            np.round(list_scores[i], 1),
-            xy=(x, y),
-            xytext=xytext,
-            textcoords="offset points",
-            ha="center",
-            va="center",
-        )
-
-    path_spiderplot_graph = (
-        pathlib.Path(__file__).parent / "tmp" / "focus_area_spider_plot.jpg"
-    )
-    plt.savefig(path_spiderplot_graph, format="jpg")
-
-    # crop the left and right sides of the image
-    image = Image.open(path_spiderplot_graph)
-    width, height = image.size
-    crop_width = int(width * 0.25)
-    left = crop_width
-    top = 0
-    right = width - crop_width
-    bottom = height
-    cropped_image = image.crop((left, top, right, bottom))
-    cropped_image.save(path_spiderplot_graph)
-
-    matplotlib.pyplot.close()
-
-
-def _generate_colorbar_plots(
-    dict_scores: Dict[str, Dict[str, Union[float, int]]]
-) -> None:
-    """
-    Creates horizontal gauge charts based on the individual's scores.
-
-    Args:
-        param(Dict[str, Dict[str, Union[float, int]]]): a nested dictionary that corresponds
-        to the score receieved for each focus area/skill
-
-    Returns:
-        None
-    """
-    path_skill_range = (
-        pathlib.Path(__file__).parent.parent / "resources" / "skill_range.csv"
-    )
-    df_skill_range = pd.read_csv(path_skill_range)
-
-    fig = plt.figure(figsize=(8, 2))
-    ax = fig.add_axes([0.1, 0.2, 0.8, 0.4])
-    ax2 = fig.add_axes([0.1, 0.1, 0.8, 0.1])
-    ax3 = fig.add_axes([0.1, 0.6, 0.8, 0.1])
-
-    left_color = "#FCBEC1"
-    right_color = "#D9FBC8"
-    center_color = "#F4F4F4"
-
-    # Create a colormap for the left half (green to white)
-    cmap_left = mcolors.LinearSegmentedColormap.from_list(
-        "LeftCmap", [left_color, center_color]
+    # generate color bar for pace
+    generate_color_bar_plot(
+        metric_name="pace",
+        metric_unit_measurement=" words/min",
+        metric_average=paylaod["pace"]["measured"]["average"],
+        metric_middle_max=150,
+        metric_middle_min=120,
+        bar_max=210,
+        bar_min=60,
+        bar_annotations={"high": "Too Fast", "middle": "Optimal", "low": "Too Slow"},
+        colorbar_range=[60, 100, 120, 150, 170, 210],
+        colorbar_colors=[
+            "#FAC2B6",
+            "#FADDB6",
+            "#BBFAB6",
+            "#BBFAB6",
+            "#FADDB6",
+            "#FAC2B6",
+        ],
     )
 
-    # Create a colormap for the right half (white to red)
-    cmap_right = mcolors.LinearSegmentedColormap.from_list(
-        "RightCmap", [center_color, right_color]
+    # generate line chart for pace
+    generate_line_chart(
+        metric_name="pace",
+        metric_unit_measurement="words/min",
+        metric_average=paylaod["pace"]["measured"]["average"],
+        metric_middle_max=150,
+        metric_middle_min=120,
+        colorbar_min=60,
+        colorbar_max=210,
+        metric_time_series_x_y=paylaod["pace"]["timestamp_graph_data"],
+        colorbar_range=[60, 100, 120, 150, 170, 210],
+        colorbar_colors=[
+            "#FAC2B6",
+            "#FADDB6",
+            "#BBFAB6",
+            "#BBFAB6",
+            "#FADDB6",
+            "#FAC2B6",
+        ],
     )
 
-    # white cmap
-    cmap_white = mcolors.LinearSegmentedColormap.from_list(
-        "WhiteCmap", ["white", "white"]
+    # generate colorbar for eye contact
+    generate_color_bar_plot(
+        metric_name="eye_contact",
+        metric_unit_measurement="%",
+        metric_average=paylaod["eye_contact"]["average_percentage"],
+        metric_middle_max=70,
+        metric_middle_min=50,
+        bar_max=100,
+        bar_min=0,
+        bar_annotations={"high": "High", "middle": "Optimal", "low": "Low"},
+        colorbar_range=[0, 30, 50, 70, 100],
+        colorbar_colors=["#FAC2B6", "#FADDB6", "#BBFAB6", "#BBFAB6", "#FADDB6"],
     )
 
-    # Combine the left and right colormaps
-    colors = np.vstack(
-        (cmap_left(np.linspace(0, 1, 256)), cmap_right(np.linspace(0, 1, 256)))
+    # generate colorbar for sentiment
+    generate_color_bar_plot(
+        metric_name="sentiment",
+        metric_unit_measurement="%",
+        metric_average=100 * paylaod["sentiment"]["measured"]["average"] if paylaod["sentiment"]["measured"]["average"] < 1 else paylaod["sentiment"]["measured"]["average"],
+        metric_middle_max=65,
+        metric_middle_min=35,
+        bar_max=100,
+        bar_min=0,
+        bar_annotations={"high": "Positive", "middle": "Neutral", "low": "Negative"},
+        colorbar_range=[0, 30, 50, 85, 100],
+        colorbar_colors=["#FAC2B6", "#FADDB6", "#FADDB6", "#BBFAB6", "#BBFAB6"],
     )
-    cmap_custom = mcolors.ListedColormap(colors)
 
-    for skill_dict in dict_scores.values():
-        for skill, score in skill_dict.items():
-            min_gauge_value = df_skill_range.loc[
-                df_skill_range["skills"] == skill, "Min"
-            ].values[0]
-            max_gauge_value = df_skill_range.loc[
-                df_skill_range["skills"] == skill, "Max"
-            ].values[0]
-            r1_gauge_value = df_skill_range.loc[
-                df_skill_range["skills"] == skill, "R1"
-            ].values[0]
-            r2_gauge_value = df_skill_range.loc[
-                df_skill_range["skills"] == skill, "R2"
-            ].values[0]
+    # generate colorbar for smile
+    generate_color_bar_plot(
+        metric_name="smile",
+        metric_unit_measurement="%",
+        metric_average=100 * paylaod["smile"]["average_percentage"] if paylaod["smile"]["average_percentage"] < 1 else paylaod["smile"]["average_percentage"],
+        metric_middle_max=65,
+        metric_middle_min=35,
+        bar_max=100,
+        bar_min=0,
+        bar_annotations={"high": "Positive", "middle": "Neutral", "low": "Negative"},
+        colorbar_range=[0, 30, 50, 85, 100],
+        colorbar_colors=["#FAC2B6", "#FADDB6", "#FADDB6", "#BBFAB6", "#BBFAB6"],
+    )
 
-            guage_range = np.linspace(min_gauge_value, max_gauge_value, 512)
+    # generate colorbar for volume
+    generate_color_bar_plot(
+        metric_name="volume",
+        metric_unit_measurement=" dB",
+        metric_average=paylaod["volume"]["inference"]["result"]["average_power"],
+        metric_middle_max=80,
+        metric_middle_min=60,
+        bar_max=150,
+        bar_min=0,
+        bar_annotations={"high": "High", "middle": "Optimal", "low": "Low"},
+        colorbar_range=[0, 30, 50, 60, 80, 90, 100, 150],
+        colorbar_colors=[
+            "#FB9993",
+            "#FAC2B6",
+            "#FADDB6",
+            "#BBFAB6",
+            "#BBFAB6",
+            "#FADDB6",
+            "#FAC2B6",
+            "#FB9993",
+        ],
+    )
 
-            norm = matplotlib.colors.Normalize(
-                vmin=guage_range[0], vmax=guage_range[-1]
-            )
+    # generate line chart for volume
+    generate_line_chart(
+        metric_name="volume",
+        metric_unit_measurement="Decibels",
+        metric_average=paylaod["volume"]["inference"]["result"]["average_power"],
+        metric_middle_max=80,
+        metric_middle_min=60,
+        colorbar_min=0,
+        colorbar_max=150,
+        metric_time_series_x_y=paylaod["volume"]["data"],
+        colorbar_range=[0, 30, 50, 60, 80, 90, 100, 150],
+        colorbar_colors=[
+            "#FB9993",
+            "#FAC2B6",
+            "#FADDB6",
+            "#BBFAB6",
+            "#BBFAB6",
+            "#FADDB6",
+            "#FAC2B6",
+            "#FB9993",
+        ],
+    )
 
-            cbar = matplotlib.colorbar.ColorbarBase(
-                ax,
-                cmap=cmap_custom,
-                norm=norm,
-                orientation="horizontal",
-                boundaries=guage_range,
-            )
-
-            cbar2 = matplotlib.colorbar.ColorbarBase(
-                ax2,
-                cmap=cmap_white,
-                norm=norm,
-                orientation="horizontal",
-                boundaries=guage_range,
-            )
-
-            cbar3 = matplotlib.colorbar.ColorbarBase(
-                ax3,
-                cmap=cmap_white,
-                norm=norm,
-                orientation="horizontal",
-                boundaries=guage_range,
-            )
-
-            cbar.outline.set_visible(False)
-            cbar2.outline.set_visible(False)
-            cbar3.outline.set_visible(False)
-
-            ax.axvspan(score - 0.1, score + 0.1, 0, 1, facecolor="#000000")
-            ax2.axvspan(score - 0.1, score + 0.1, 0, 1, facecolor="#000000")
-            ax3.axvspan(score - 0.1, score + 0.1, 0, 1, facecolor="#000000")
-
-            file_name = skill + ".jpg"
-            path_skill_gauge_chart = pathlib.Path(__file__).parent / "tmp" / file_name
-
-            ax.set_xticks([])
-            ax2.set_xticks([])
-            ax3.set_xticks([])
-
-            annotation = plt.annotate(
-                "1", xy=(0.1, 0.1), xycoords="figure fraction", ha="center", fontsize=14
-            )
-            annotation2 = plt.annotate(
-                "10",
-                xy=(0.9, 0.1),
-                xycoords="figure fraction",
-                ha="center",
-                fontsize=14,
-            )
-            annotation3 = plt.annotate(
-                str(score),
-                xy=(score / 11, 0.75),
-                xycoords="figure fraction",
-                ha="center",
-                fontsize=14,
-            )
-
-            plt.savefig(path_skill_gauge_chart, format="jpg")
-
-            annotation.remove()
-            annotation2.remove()
-            annotation3.remove()
+    # generate bar chart for pauses
+    generate_stacked_bar_chart_pauses(paylaod["pause"])
 
 
 def _save_background_pic(old_path_background_pic=None) -> None:
@@ -392,13 +522,11 @@ def _save_background_pic(old_path_background_pic=None) -> None:
             pathlib.Path(__file__).parent.parent / "resources" / "background.jpg"
         )
 
-    new_path_background_pic = pathlib.Path(__file__).parent / "tmp" / "background.jpg"
+    new_path_background_pic = pathlib.Path(__file__).parent.parent / "tmp" / "background.jpg" 
     shutil.copy(old_path_background_pic, new_path_background_pic)
 
 
-def _generate_final_report(
-    dict_candidate: Dict[str, str], dict_scores: Dict[str, Dict[str, Union[float, int]]]
-) -> None:
+def _generate_final_report(dict_payload) -> None:
     """
     Generate final report by first generating the html code and then the corresponding pdf report
 
@@ -410,21 +538,17 @@ def _generate_final_report(
     Returns:
         None
     """
-    _generate_html(dict_candidate, dict_scores)
-    _generate_pdf(dict_candidate)
+    _generate_html(dict_payload)
+    _generate_pdf(dict_payload)
 
 
-def _generate_html(
-    dict_candidate: Dict[str, str], dict_scores: Dict[str, Dict[str, Union[float, int]]]
-) -> None:
+def _generate_html(dict_payload: Dict) -> None:
     """
     Render the html file by using jinja2 and the pilot.html file to customize the html file
     based on the specific candidate's scores
 
     Args:
         param1(Dict[str, str]): a dictionary representing the candidate's scores
-        param2(Dict[str, Dict[str, Union[float, int]]]): a nested dictionary that corresponds
-        to the score receieved for each focus area/skill
 
     Returns:
         None
@@ -433,24 +557,23 @@ def _generate_html(
     env = Environment(loader=FileSystemLoader(path_templates))
     template = env.get_template("pilot.html")
 
-    dict_bottom_top_skills = _get_bottom_and_top_skills(dict_scores)
+    dict_bottom_top_skills = _get_bottom_and_top_skills(dict_payload["skills"])
 
     payload = {
-        "dict_candidate": dict_candidate,
-        "dict_scores": dict_scores,
+        "dict_payload": dict_payload,
         "dict_bottom_top_skills": dict_bottom_top_skills,
         "dict_bottom_top_skills_text": _get_text_for_top_and_bottom_skills(
             dict_bottom_top_skills
         ),
         "dict_all_skills_description": _get_all_skills_description(),
-        "date": dt.date.today(),
+        "date": dt.date.today().strftime("%Y-%b-%d"),
     }
 
     rendered_template = template.render(payload)
 
     path_rendered_template = (
-        pathlib.Path(__file__).parent / "tmp" / "rendered_template.html"
-    )
+        pathlib.Path(__file__)
+    ).parent.parent / "tmp" / "rendered_template.html"
 
     with open(path_rendered_template, "w") as file:
         file.write(rendered_template)
@@ -543,7 +666,7 @@ def _get_all_skills_description() -> Dict[str, Dict[str, str]]:
     return dict_skills_text_cleaned
 
 
-def _generate_pdf(dict_candidate: Dict[str, str]) -> None:
+def _generate_pdf(dict_payload: Dict) -> None:
     """
     Creates the final PDF file and saves to the results folder
 
@@ -553,14 +676,14 @@ def _generate_pdf(dict_candidate: Dict[str, str]) -> None:
     Returns:
         None
     """
-    name, company = dict_candidate["name"].replace(" ", "_"), dict_candidate[
-        "company_name"
-    ].replace(" ", "_")
+    name, company = dict_payload["candidate_profile"]["name"].replace(
+        " ", "_"
+    ), dict_payload["candidate_profile"]["company_name"].replace(" ", "_")
     date_today_string = dt.date.today().strftime("%Y-%m-%d")
     report_filename = "_".join([name, company, date_today_string])
     report_filename += ".pdf"
 
-    path_html_file = pathlib.Path(__file__).parent / "tmp" / "rendered_template.html"
+    path_html_file = pathlib.Path(__file__).parent.parent / "tmp" / "rendered_template.html" 
     path_pdf_report = pathlib.Path(__file__).parent.parent / "results" / report_filename
 
     weasyprint.HTML(path_html_file).write_pdf(path_pdf_report)
@@ -576,7 +699,7 @@ def _delete_temp_files() -> None:
     Returns:
         None
     """
-    directory = pathlib.Path(__file__).parent / "tmp"
+    directory = pathlib.Path(__file__).parent.parent / "tmp"
 
     # Get a list of all files in the directory
     file_list = os.listdir(directory)
@@ -584,12 +707,12 @@ def _delete_temp_files() -> None:
     # Iterate over the file list and delete each file
     for filename in file_list:
         file_path = os.path.join(directory, filename)
+
         if os.path.isfile(file_path):
             os.remove(file_path)
 
 
 if __name__ == "__main__":
-
     path_data = pathlib.Path(__file__).parent.parent / "data" / "sample_video_data.json"
     with open(path_data) as file:
         dict_data = json.load(file)

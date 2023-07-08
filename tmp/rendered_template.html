@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html>
+    <head>           
+        <style>
+            @page {
+                size: Letter;
+
+                @top-center {
+                    content: element(pageHeader);
+                }
+
+                @bottom-left {
+                    content: string(heading);
+                    font-size: 9pt;
+                    height: 1cm;
+                    vertical-align: middle;
+                    width: 100%;
+                    text-transform: uppercase;
+                    margin-top: 1cm;
+                }
+
+                    @bottom-right {
+                    background: #14213d;
+                    color: #ffffff;
+                    content: counter(page);
+                    height: 1cm;
+                    text-align: center;
+                    width: 1cm;
+                    margin-top: 1cm;
+                }
+
+                    @bottom-center {
+                    background: #14213d;
+                    content: '';
+                    display: block;
+                    height: 0.05cm;
+                    opacity: 0.5;
+                    width: 100%;
+                    margin-top: 1cm;
+                }
+            }
+
+            @page :first {
+                background: url(./background.jpg) no-repeat center;
+                background-size:contain;
+                margin: 0;
+            }
+
+            html {
+            color: #393939;
+            font-family: Calibri;
+            font-size: 10pt;
+            font-weight: 300;
+            line-height: 1.25;
+            }
+
+            html body h1,
+            html body h2,
+            html body h3,
+            html body h4 {
+            margin: 0;
+            }
+
+            html body h1 {
+            color: #0d0c0c;
+            font-size: 16pt;
+            padding: 0;
+            margin: 0;
+            text-transform: uppercase;
+            border-bottom: solid 2px #cbd5e0;
+
+            }
+
+            html body h2 {
+            color: #106ba8;
+            font-size: 14pt;
+            padding: 0;
+            margin-bottom: 10px;
+            border-bottom: solid 3px #cbd5e0;
+            }
+
+            html body h3 {
+                color: #106ba8;
+                font-size: 12pt;
+                padding: 0;
+                margin: 0;
+            }
+
+            html body article#cover {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            height: 297mm;
+            }
+
+            section {
+            margin-top: .5cm;
+            margin-bottom: 2cm;
+            }
+
+            html body article#cover section {
+            text-align: right;
+            }
+
+            ul.toc a::after {
+            content: leader(' ') target-counter(attr(href url), page);  
+            }
+
+            .toc {
+            list-style: none;
+            padding-left: 0;
+            }
+
+            .custom-link {
+            color: rgb(1, 1, 1); 
+            text-decoration: none; 
+            font-size: medium;
+            line-height: 1.75;
+            }
+
+            .tab {
+            padding-left: 40px; 
+            }
+
+            .vertical-flexbox {
+            display: flex;
+            flex-direction: column;
+            }
+
+            .horizontal-flexbox {
+            display: flex;
+            justify-content: space-between;
+            }
+
+            .vertical-flexbox-gauge {
+            width: 50%;
+            }
+
+            .vertical-flexbox-gauge p {
+            font-size: x-small;
+            }
+
+            .bar-charts {
+            width: 100%;
+            height: auto;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 1cm;
+            margin-bottom: 5mm;
+            }
+
+            .line {
+            border: none;
+            border-top: 1px dashed black;
+            width: 100%;
+            margin-bottom: 5mm;
+            }
+
+            .medium-blue-text {
+            font-size: medium;
+            color: #106ba8;
+            }
+
+            .front-page-text {
+            text-align: left;
+            position: absolute;
+            top: 14cm;
+            left: 6.4cm;
+            }
+
+            .front-page-text p {
+            color: #106ba8;
+            font-size: 18pt;
+            font-weight: bold;
+            }
+
+            .front-page-text h3 {
+            color: #106ba8;
+            font-size: 24pt;
+            font-weight: bold;
+            }
+
+            .color-bar {
+                width: 100%;
+                height: auto;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .line-chart {
+                width: 100%;
+                height: auto;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .syled-table {
+                font-family: sans-serif;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+            }
+            
+            .styled-table thead tr {
+                background-color: #009879;
+                color: #ffffff;
+                text-align: left;
+            }
+
+            .styled-table th,
+            .styled-table td {
+                padding: 8px 5px;
+                min-width: 100px; 
+                width: auto; 
+                text-align: center;
+                font-size: smaller;
+            }
+
+            .styled-table tbody tr {
+                border-bottom: 1px solid #EEEFEE;
+            }
+
+            .styled-table tbody tr:nth-of-type(even) {
+                background-color:#EEEFEE;
+            }
+
+
+            #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            text-align: center;
+            color: darkgrey;
+            }
+
+            #spider {
+            display: block;
+            margin-top: 2cm;
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+            height: auto;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <header id="header" style="margin-top: -1.5cm">
+            <p>Assessment Report | Vivek Test | 2023-Jul-08</p>
+        </header>
+
+    <!-- cover pic -->
+
+        <article id="cover">
+            <section>
+                <div class="front-page-text">
+                    <h3>ASSESSMENT REPORT</h3>
+                    <br>
+                    <p>VIVEK TEST</p>
+                    <p></p>
+                    <p>2023-Jul-08</p>
+                </div>
+            </section>
+        </article>
+
+    <!-- content page -->
+        
+        <article style="page-break-before: always">
+            <section>
+                <h2>Contents</h2>
+                <ul class="toc">
+                    <li><a href="#page1" class="custom-link">INTRODUCTION</a></li>
+                    <li><a href="#page2" class="custom-link">OVERVIEW</a></li>
+                    <li><a href="#page3" class="custom-link">FOCUS AREAS</a></li>
+                    <li><a href="#page4" class="custom-link">SKILLS</a></li>
+                    <li><a href="#page5" class="custom-link">LEADERSHIP SKILLS</a></li>
+                    <li><a href="#page6" class="custom-link">COMMUNICATION ATTRIBUTES</a></li>
+                    <li><a href="#page7" class="custom-link">KEY PERFORMANCE STRENGTHS</a></li>
+                    <li><a href="#page8" class="custom-link">KEY IMPROVEMENT OPPORTUNITIES</a></li>
+                    <li><a href="#page9" class="custom-link">DISCLAIMER AND COPYRIGHT</a></li>
+                </ul>
+            </section>
+        </article>
+
+    <!-- summary page -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page1">INTRODUCTION</h2>
+                <p>This Leadership Report has been specifically crafted to assist you in navigating the development planning process. Its purpose is to help you integrate the outcomes from the EdMyst Assessment process into a comprehensive development plan. Whether used independently or alongside a formal coaching process, this report will prove effective.</p>
+                <p>Focused on your workplace performance, the Leadership Report examines both strengths and improvement opportunities. The strengths encompass the qualities that shape your impression on others and enable you to function optimally. On the other hand, the improvement opportunities refer to behavioral tendencies that could undermine your performance, impeding your effectiveness and eroding the quality of your relationships with customers, colleagues, and friends.</p>
+                <p>The primary goal of this report is to facilitate an understanding of your performance potential and identify any barriers that may hinder your achievements. As you review the information, it is important to consider three key points. First, only some statements may accurately reflect your self-perception. Second, everyone has inherent strengths and weaknesses, and any score can have positive and negative implications on performance. Lastly, focus on the overall themes presented in the report rather than getting caught up in individual details.</p>
+                <p>There are three ways in which this report can be utilized. Firstly, it provides a snapshot of your interpersonal performance within the workplace. Secondly, it serves as a tool to evaluate the alignment between your skills and the organization's expectations. Finally, it acts as a guide for contemplating performance improvement. When interpreting the results, it is essential to consider your own aspirations and goals, rather than assessing them in absolute terms.</p>
+            </section>
+        </article>      
+    
+    <!-- overview page -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page2">OVERVIEW</h2>
+                    <p>
+                        
+                            You are able to smoothly bounce back from setbacks, adapt to change, and maintain a positive mindset in the face of adversity.
+                        
+                            You effectively navigate conflicts, handle stress, and maintain a positive and focused mindset.
+                        
+                            You inspire your team to explore new ideas, challenge the status quo, and take calculated risks that can lead to breakthrough solutions and opportunities.
+                         
+                    </p>
+                    <p>
+                        However, 
+                        
+                            
+                                
+                                
+                                
+                                you may struggle with prioritizing tasks, coordinating resources, and meeting deadlines.                            
+                            
+                        
+                            
+                                You may overlook important information or fail to thoroughly review documents, resulting in errors, inaccuracies, or incomplete work.
+                            
+                        
+                            
+                                You find it difficult to admit mistakes or accept ownership for failures. You tend to shift blame onto others or make excuses, which can negatively impact team morale and trust.
+                            
+                         
+                        Leadership development programs, mentorship, and coaching can provide valuable guidance and resources to overcome these challenges and further develop these essential leadership skills.
+                    </p>
+                <p></p>
+            </section>
+        </article>      
+
+    <!-- spider plot page -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page3">FOCUS AREAS</h2>
+                <img src="../tmp/focus_area_spider_plot.jpg" id="spider">
+            </section>
+        </article>  
+        
+    <!-- bar charts page -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page4">SKILLS</h2>
+                <div class="vertical-flexbox">
+                    <img src="../tmp/Architect.jpg" class="bar-charts">
+                    <img src="../tmp/Catalyst.jpg" class="bar-charts">
+                </div>
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+                <h2>SKILLS</h2>
+                <div class="vertical-flexbox">
+                    <img src="../tmp/Coach.jpg" class="bar-charts">
+                    <img src="../tmp/Visionary.jpg" class="bar-charts">
+                </div>
+            </section>
+        </article> 
+
+    <!-- Leadership skills and the vertical gauge graphs -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page5">LEADERSHIP SKILLS</h2>
+                <p>Leadership skills are the abilities and qualities that enable individuals to guide, inspire, and influence others towards achieving a common goal or vision. These skills are essential for effective leadership and can be developed and honed through experience, training, and self-reflection.</p>
+                
+                    <h2>Architect</h2>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>adaptability</h4>
+                                <p>Making appropriate responses to changing situations, adapting one's behavior to manage changing circumstances or different people</p>
+                            </div>
+                            <img src="../tmp/Adaptability.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>attention to detail</h4>
+                                <p>Noticing and focusing on the smallest aspects of a task or project, ensuring accuracy, precision, and quality</p>
+                            </div>
+                            <img src="../tmp/Attention to detail.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>contextualization of knowledge</h4>
+                                <p>Understanding and applying knowledge within a specific context or situation</p>
+                            </div>
+                            <img src="../tmp/Contextualization of knowledge.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>critical thinking</h4>
+                                <p>Solving a problem by recognizing assumptions, evaluating the arguments, and then drawing conclusions about the problem</p>
+                            </div>
+                            <img src="../tmp/Critical Thinking.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>developing others</h4>
+                                <p>Sharing one's knowledge, skills, or expertise with others, and encouraging and reinforcing individual and professional development</p>
+                            </div>
+                            <img src="../tmp/Developing others.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>ownership and accountability</h4>
+                                <p>Taking responsibility for one's and teams actions, decisions, and outcomes</p>
+                            </div>
+                            <img src="../tmp/Ownership and accountability.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>planning</h4>
+                                <p>Defining clear and specific goals, understanding the desired outcomes, identifying measurable objectives, and establishing realistic timelines for achieving them</p>
+                            </div>
+                            <img src="../tmp/Planning.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>project management</h4>
+                                <p>Planning, organizing, and executing projects to achieve specific goals within defined constraints, such as time, budget, and resources</p>
+                            </div>
+                            <img src="../tmp/Project management.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>strategic thinking</h4>
+                                <p>Formulating objectives and priorities, and implementing plans consistent with the long-term interests of the organization in a global environment</p>
+                            </div>
+                            <img src="../tmp/Strategic Thinking.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>unconventional approach (breaking stereotypes and barriers)</h4>
+                                <p>Working beyond the stereotypes of gender or creed and openly accepting differing perspectives</p>
+                            </div>
+                            <img src="../tmp/Unconventional approach (breaking stereotypes and barriers).jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                
+                    <h2>Catalyst</h2>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>collaboration skills</h4>
+                                <p>Working effectively and productively with others toward a common goal</p>
+                            </div>
+                            <img src="../tmp/Collaboration Skills.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>courage and risk-taking</h4>
+                                <p>Facing one's fears and trying something different by stretching one's mindset and embracing challenges</p>
+                            </div>
+                            <img src="../tmp/Courage and risk-taking.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>dealing with uncertainty</h4>
+                                <p>Adapting and coping constructively with unprecedented situations or events</p>
+                            </div>
+                            <img src="../tmp/Dealing with uncertainty.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>driving change and innovation</h4>
+                                <p>Bringing in radical or incremental shifts or improvements and introducing and implementing new ideas</p>
+                            </div>
+                            <img src="../tmp/Driving change and innovation.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>energy, passion and optimism</h4>
+                                <p>Shifting one's perspective with a sense of passion and hope that the outcome of some specific endeavor would be favorable</p>
+                            </div>
+                            <img src="../tmp/Energy, passion and optimism.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>fostering inclusiveness</h4>
+                                <p>Promoting diversity, equity, and equality and creating a welcoming and supportive environment where everyone feels valued, respected, and included</p>
+                            </div>
+                            <img src="../tmp/Fostering inclusiveness.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>instilling trust</h4>
+                                <p>Gaining the confidence and trust of others through honesty, integrity, and authenticity</p>
+                            </div>
+                            <img src="../tmp/Instilling Trust.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>openness to feedback</h4>
+                                <p>Being receptive and willing to receive input, suggestions, and criticism from others</p>
+                            </div>
+                            <img src="../tmp/Openness to feedback.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>organizational awareness</h4>
+                                <p>Appreciating and using the formal and informal relationships and structures for the benefit of the organization</p>
+                            </div>
+                            <img src="../tmp/Organizational awareness.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>promoting culture of respect</h4>
+                                <p>Creating and promoting a culture where diversity is valued, and where individuals feel that their contributions are recognized and acknowledged</p>
+                            </div>
+                            <img src="../tmp/Promoting culture of respect.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>resilience</h4>
+                                <p>Withstanding adversity and bouncing back from difficult life situations with courage and emotional strength</p>
+                            </div>
+                            <img src="../tmp/Resilience.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>time management and prioritization</h4>
+                                <p>Using ones time effectively and productively, and prioritizing tasks efficiently in order to manage one's time</p>
+                            </div>
+                            <img src="../tmp/Time management and prioritization.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>vision alignment</h4>
+                                <p>Ensuring that everyone involved understands and is committed to the same overarching objectives and values</p>
+                            </div>
+                            <img src="../tmp/Vision Alignment.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                
+                    <h2>Coach</h2>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>coaching</h4>
+                                <p>Effectively enabling individuals or teams to help them achieve their goals and maximize their potential</p>
+                            </div>
+                            <img src="../tmp/Coaching.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>empathetic</h4>
+                                <p>Being sensitive to the emotions of others, showing compassion, and actively listening to their concerns</p>
+                            </div>
+                            <img src="../tmp/Empathetic.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>motivating and inspiring others</h4>
+                                <p>Motivating and guiding the team to get the job done, and to bring out their best</p>
+                            </div>
+                            <img src="../tmp/Motivating and inspiring others.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>self-control and regulation</h4>
+                                <p>Regulating one's emotions, thoughts, and behavior while inhibiting or giving in to temptations and impulses</p>
+                            </div>
+                            <img src="../tmp/Self-control and regulation.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>speaking with conviction</h4>
+                                <p>Expressing ones ideas, opinions, and beliefs with confidence, clarity, and passion that inspires others to believe in and support ones message</p>
+                            </div>
+                            <img src="../tmp/Speaking with conviction.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>understanding one's emotions</h4>
+                                <p>Recognizing, interpreting, and effectively managing one's own emotional experiences</p>
+                            </div>
+                            <img src="../tmp/Understanding one's emotions.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                
+                    <h2>Visionary</h2>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>big picture thinking</h4>
+                                <p>Coming up with progressive thoughts, seeing possibilities, and grabbing opportunities</p>
+                            </div>
+                            <img src="../tmp/Big Picture Thinking.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>empowering others</h4>
+                                <p>Fostering a sense of trust, accountability, and confidence among team members, enabling them to reach their full potential and contribute meaningfully to their roles</p>
+                            </div>
+                            <img src="../tmp/Empowering others.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>exploring perspectives and alternatives</h4>
+                                <p>Resolving problems with an open mind and consideration towards different perspectives and alternatives</p>
+                            </div>
+                            <img src="../tmp/Exploring perspectives and alternatives.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>purpose-driven</h4>
+                                <p>Intending to achieve a long-term goal that is both personally meaningful and makes a positive mark at the workplace</p>
+                            </div>
+                            <img src="../tmp/Purpose-driven.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>role modeling</h4>
+                                <p>Leading by example and serving as a positive role model for others to emulate</p>
+                            </div>
+                            <img src="../tmp/Role Modeling.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                        <div class="horizontal-flexbox">
+                            <div class="vertical-flexbox-gauge">
+                                <h4>self-directedness</h4>
+                                <p>Regulating and adapting behavior to the demands of a situation for achieving personally chosen goals and values</p>
+                            </div>
+                            <img src="../tmp/Self-directedness.jpg" style="width: 6cm; height: 2cm">
+                        </div>
+                        <div class="line"></div>
+                    
+                
+            </section>
+        </article> 
+
+        <!-- Communication Attributes -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page6">COMMUNICATION ATTRIBUTES</h2>
+
+                <br>
+                <br>
+                <br>
+                <br>
+                <table class="styled-table" style="border-style: solid; margin-left:auto;margin-right:auto; font-size: small;">
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Summary</th>
+                    </tr>
+                    <tr>
+                        <td>Pace</td>
+                        <td>118 words per minute</td>
+                    </tr>
+                    <tr>
+                        <td>Pause</td>
+                        <td>11 pauses</td>
+                    </tr>
+                    <tr>
+                        <td>Fillers</td>
+                        <td>0 repititions</td>
+                    </tr>
+                    <tr>
+                        <td>Repeated Words</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Eye Contact</td>
+                        <td>100% of the time</td>
+                    </tr>
+                    <tr>
+                        <td>Smile</td>
+                        <td>18% of the time</td>
+                    </tr>
+                    <tr>
+                        <td>Sentiment</td>
+                        <td>high</td>
+                    </tr>
+                    <tr>
+                        <td>Volume</td>
+                        <td>66 dB</td>
+                    </tr>
+                </table>
+                
+
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+                <div>
+                    <h3>Pace</h3>
+                    <br>
+                    <h4>Result</h4>
+                    <p>You speak a bit slow based on the video. </p>
+                    <img src="../tmp/pace_colorbar.jpg" class="color-bar">
+                    <h4>Detailed Analysis</h4>
+                    <p>Your average pace was 118 words per minute.The ideal pace is 120-150 words per minute in a professional conversation. Without adequate variation in pace, your conversation can appear to be monotonous.  </p>
+                    <img src="../tmp/pace_line_chart.jpg" class="line-chart">
+                    <h4>Recommendation</h4>
+                    <p>Keep going! Continue practicing how to vary your pace throughout the conversation. Varying your pace makes the content more interesting for the listeners and adds emotion to the content. </p>
+                </div>
+
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+                <div>
+                    <h3>Pause</h3>
+                    <br>
+                    <h4>Result</h4>
+                    <p>You have taken 11 pause(s) in your 34 second(s) video recording.</p>
+                    <br>
+                    <table class="styled-table" style="border-style: solid; margin-left:auto;margin-right:auto; font-size: small;">
+                        <tr>
+                            <th>Types of Pauses</th>
+                            <th>Duration of Pause</th>
+                            <th>Number of Pauses</th>
+                        </tr>
+                        <tr>
+                            <td>Long Pauses</td>
+                            <td>Greater than 3.5 sec</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Strategic Pauses</td>
+                            <td>Between 2.5 to 3 sec</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>Transition Pauses</td>
+                            <td>Between 1 to 2 sec</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>Sentence Pauses</td>
+                            <td>Between 0.5 to 1 sec</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>Sensory Pauses</td>
+                            <td>Between 0.3 to 0.5 sec</td>
+                            <td>3</td>
+                        </tr>
+                    </table>
+                    <br>
+                    <img src="../tmp/pauses_stacked_bar_chart.jpg" class="line-chart">
+                    <h4>Detailed Analysis</h4>
+                    <p>It's great that you have not taken any long pauses because they might indicate that you are hesitant or unfamiliar with your content. </p>
+                    <h4>Recommendation</h4>
+                    <p>To be a confident and effective speaker, you can use short pauses depending on the content or topic you are speaking on and the audience you are addressing.  In addition, you can use some pauses to create an appropriate impression or convey an emotional appeal depending on the content you are presenting. 
+You can consider using strategic (1-2 pauses if required), transition (2-3 pauses), sentence (10-12 pauses), and sensory (15-20 pauses) pauses. Using no pauses or fewer pauses indicates anxiety, less confidence, and impulsive behavior.</p>
+                </div>
+                
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+
+                <div>
+                    <h3>Fillers</h3>
+                    <br>
+                    <h4>Result</h4>
+                    <p>You have used 0 filler word(s) in your recording.</p>
+                    <div>
+                        
+                    </div>
+                    <h4>Detailed Analysis</h4>
+                    <p>You seem to be focused on your message and know how to keep the listeners engaged. You come across as a professional, prepared, and impactful communicator. </p>
+                    <h4>Recommendation</h4>
+                    <p>Continue practicing! Using too many fillers can distract your audience from the message and completely change their perception of you, making you seem less professional, unprepared, and less contextual. If a person uses more than two fillers every two minutes, they are likely to distract the listener. When you feel flustered while speaking, do not say anything instead of using a filler word. Videotape your speech and identify your crutch words. Be aware of their usage when you talk by consciously focusing on not using them.</p>
+                </div>
+
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+
+                <div>
+                    <h3>Repeated Words</h3>
+                    <br>
+                    <h4>Result</h5>
+                    <p>You have not used any repeated words</p>
+                    <div>
+                        
+                    </div>
+                    <h4>Detailed Analysis</h4>
+                    <p>You have not repeated any of the words in your video. It reduces or takes away redundancy if the word(s) is not explaining any technical information or is not a jargon.</p>
+                </div>
+
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+
+                <div>
+                    <h3>Sentiment</h3>
+                    <br>
+                    <h4>Result</h4>
+                    <p>Your overall sentiment analysis is positive based on your video.</p>
+                    <img src="../tmp/sentiment_colorbar.jpg" class="color-bar">
+                    <h4>Detailed Analysis</h4>
+                    <p>We detected positive sentiments for most the times.</p>
+                    <h4>Recommendation</h4>
+                    <p>Continue using the positive words intentionally and more often as they are associated with positive feelings of happiness, joy, and excitement. In addition, it may undoubtedly evoke positive emotions in the listeners. </p>
+                </div>
+
+                <div>
+                    <h3>Smile</h3>
+                    <br>
+                    <h4>Result</h4>
+                    <p>You have smiled 18% of the times in the video.</p>
+                    <img src="../tmp/smile_colorbar.jpg" class="color-bar">
+                    <h4>Detailed Analysis</h4>
+                    <p>In 34 second(s) of your recording, you smiled for 6 second(s).</p>
+                    <h4>Recommendation</h4>
+                    <p>Smile occasionally if the content requires you to smile. Smile has enormous power to diffuse tense situations, smoothen conversations, raise the level of teamwork, and communicate friendliness. In addition, a genuine smile conveys pleasant emotions such as happiness, acceptance, and appreciation.</p>
+                </div>
+
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+
+                <div>
+                    <h3>Volume</h3>
+                    <br>
+                    <h4>Result</h4>
+                    <p>Your volume during the presentation was within the optimal range most of the time.</p>
+                    <img src="../tmp/volume_colorbar.jpg" class="color-bar">
+                    <h4>Detailed Analysis</h4>
+                    <p>Your volume was <50 dB for 14% of the times, 50-90 dB for 86% of the times and > 90 dB for 0% of the times. You varied your volume in this recording. Change from soft to loud or loud to soft volume to emphasize the key thoughts during the presentation and create the desired attention. Also, while modulating your volume, be mindful of the size of the room and audience. Continue modulating your volume based on the emotional appeal that you are trying to convey through your presentation.</p>
+                    <img src="../tmp/volume_line_chart.jpg" class="line-chart">
+                </div>
+
+            </section>
+        </article> 
+
+    <!-- Key Performance Strengths -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page7">KEY PERFORMANCE STRENGTHS</h2>
+                
+                    <h3>Courage And Risk-Taking</h3>
+                    <p class="medium-blue-text">Believes in oneself and one's abilities, and acts with fortitude despite ambiguity or roadblocks.</p>
+                    <ul>
+                        
+                            <li>Takes calculated risks to investigate possibilities and pursue creative ideas.</li>
+                        
+                            <li>Accepts challenging tasks as growth opportunities rather than as roadblocks.</li>
+                        
+                            <li>Takes full responsibility for one's decisions and learns from setbacks or errors.</li>
+                        
+                    </ul>
+                    <p class="medium-blue-text">To help you reflect on your strength, here are few self-reflection questions:</p>
+                    <ul>
+                        
+                            <li>Have I been able to embrace my fears and worries without allowing them to talk me out of taking calculated risks?</li>
+                        
+                            <li>What is my risk appetite? How does it influence my willingness to accept risks?</li>
+                        
+                            <li>Do I actively track down opportunities to get out of my comfort zone? Do I have faith in my ability to take calculated risks?</li>
+                        
+                            <li>Do I encourage and motivate people to take chances and try new things? How do I get better at it?</li>
+                        
+                            <li>How can I develop a courageous and risk-taking mindset in my team? Is there anything in specific I can do to foster it?</li>
+                        
+                    </ul>
+                    <p class="medium-blue-text">To help you leverage your strength, here are some suggestions:</p>
+                    <ul>
+                        
+                            <li>Push yourself to take bigger risks and step outside your comfort zone. Track down opportunities where the risks are higher, but the plausible rewards are significantly greater.</li>
+                        
+                            <li>Take an agile approach to testing ideas, gathering feedback, and improving based on real-world outcomes. Use a Six Sigma approach like DMAIC (Define, Measure, Analyze, Improve, Control), to systematically discover and decrease process flaws or variations. It will enable you to take bigger, more significant risks.</li>
+                        
+                            <li>Share your experiences of taking calculated risks and continuing to learn from setbacks with the team. Encourage others by presenting the rewards and progress that stem from taking risks.</li>
+                        
+                    </ul>
+                
+                    <h3>Resilience</h3>
+                    <p class="medium-blue-text">Can self-regulate one's emotions, thoughts, and actions and does what needs to be done to bounce back from setbacks.</p>
+                    <ul>
+                        
+                            <li>Perseveres on one's goals and objectives to deliver results despite facing setbacks.</li>
+                        
+                            <li>Finds creative solutions to overcome obstacles as a result of being flexible in one's approach.</li>
+                        
+                            <li>Concentrates on one's locus of control to maximize one's chance of success when faced with challenges.</li>
+                        
+                    </ul>
+                    <p class="medium-blue-text">To help you reflect on your strength, here are few self-reflection questions:</p>
+                    <ul>
+                        
+                            <li>Do I rapidly recover from setbacks and maintain a positive outlook?</li>
+                        
+                            <li>Have I shown resilience recently? What were the specific plans or ways of coping that helped me get through hard times?</li>
+                        
+                            <li>How well do I prioritize self-care and stress management to maintain my resilience? Do I have healthy ways to recharge and refuel?</li>
+                        
+                            <li>How willing am I to seek support and advice from others when confronted with stressful situations?</li>
+                        
+                            <li>Am I able to maintain composure and make sound decisions in high-stress situations?</li>
+                        
+                    </ul>
+                    <p class="medium-blue-text">To help you leverage your strength, here are some suggestions:</p>
+                    <ul>
+                        
+                            <li>Use mindfulness techniques and deep breathing exercises as part of your daily work routine to lower stress and build resilience.</li>
+                        
+                            <li>Foster a culture where team members encourage and support one another when things are difficult to deal with and bounce back from setbacks.</li>
+                        
+                            <li>Help your team members become more resilient by sharing your experiences of dealing with setbacks and offering guidance and insight.</li>
+                        
+                    </ul>
+                
+                    <h3>Self-Control And Regulation</h3>
+                    <p class="medium-blue-text">Manages one's emotions and reactions appropriately by exhibiting self-awareness.</p>
+                    <ul>
+                        
+                            <li>Has a solid understanding of a variety of emotional release techniques to deal with pent-up emotions.</li>
+                        
+                            <li>Recognizes and manages emotional triggers to stay composed and exercise self-control.</li>
+                        
+                            <li>Can precisely identify one's emotions and link them to specific situations.</li>
+                        
+                    </ul>
+                    <p class="medium-blue-text">To help you reflect on your strength, here are few self-reflection questions:</p>
+                    <ul>
+                        
+                            <li>Am I able to control my reactions and responses in difficult situations?</li>
+                        
+                            <li>Do I stop and think before I respond to something hard or upsetting?</li>
+                        
+                            <li>How well do I control my urges and avoid making hasty or rash decisions?</li>
+                        
+                            <li>Can I recognize when I am feeling overwhelmed, stressed, or triggered, and take the right steps to get my feelings under control?</li>
+                        
+                            <li>Do I actively think about what I do and how I act?</li>
+                        
+                    </ul>
+                    <p class="medium-blue-text">To help you leverage your strength, here are some suggestions:</p>
+                    <ul>
+                        
+                            <li>Find the specific situations or triggers that cause you to act on impulse and deal with them by doing things like counting from 1 to</li>
+                        
+                            <li>Use the urge surfing exercise to endure the urge without caving in. You can do this by taking a few deep breaths and paying attention to how and where the urge feels in your body. This shift of focus will help you strengthen your self-control.</li>
+                        
+                            <li>When you have an intrusive thought, tell yourself 'Stop!' and concentrate on your breath. This will help you break out of your thought pattern, pay attention to the present, and exercise self-control.</li>
+                        
+                    </ul>
+                
+            </section>
+        </article>       
+        
+    <!-- KEY IMPROVEMENT OPPORTUNITIES -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page8">KEY IMPROVEMENT OPPORTUNITIES</h2>
+                
+                    <h3>Attention To Detail</h3>
+                    <p class="medium-blue-text">May overlook pertinent information and struggles to complete tasks accurately.</p>
+                    <ul>
+                        
+                            <li>Tends to be less organized and often delivers work of varying quality due to rushing through tasks.</li>
+                        
+                            <li>Rarely filters out distractions and focuses on the particulars of the task at hand.</li>
+                        
+                            <li>May not fully realize the need for accuracy and how it directly impacts the outcomes.</li>
+                        
+                    </ul>
+                    <p class="medium-blue-text">To help you reflect on your development area, here are few self-reflection questions:</p>
+                    <ul>
+                        
+                            <li>When making decisions, do I pay sufficient attention to the minute but significant details?</li>
+                        
+                            <li>Do I work carefully to ensure that critical details are not overlooked?</li>
+                        
+                            <li>How can I better organize and manage my tasks or projects to ensure that important details are not missed?</li>
+                        
+                            <li>What factors contribute to my tendency to overlook details? Is it a lack of focus, rushing, or simply not prioritizing attention to detail?</li>
+                        
+                            <li>Before presenting or sharing information or data, do I scrutinize and verify its factual accuracy?</li>
+                        
+                    </ul>
+                    <p class="medium-blue-text">To help you develop in this area, here are some suggestions:</p>
+                    <ul>
+                        
+                            <li>Set up basic processes and systems to keep your information organized. Make simple checklists or templates to help you with your tasks and make sure you don't miss any important details.</li>
+                        
+                            <li>Develop the discipline of evaluating your work prior to finalizing or submitting it. Pay close attention to punctuation, grammar, and formatting errors.</li>
+                        
+                            <li>Make it a habit to regularly delete or archive old or inconsequential information. Try concentrating on relevant information while screening out distractions.</li>
+                        
+                    </ul>
+                
+                    <h3>Ownership And Accountability</h3>
+                    <p class="medium-blue-text">May hesitate to embrace personal responsibility for one's actions due to a lack of commitment.</p>
+                    <ul>
+                        
+                            <li>Rarely demonstrates a sense of urgency to complete tasks in a timely manner.</li>
+                        
+                            <li>Tends to be defensive and may try to place the responsibility on others instead of taking corrective action.</li>
+                        
+                            <li>May occasionally permit noncompliance due to a lack of understanding of its impact on the outcomes.</li>
+                        
+                    </ul>
+                    <p class="medium-blue-text">To help you reflect on your development area, here are few self-reflection questions:</p>
+                    <ul>
+                        
+                            <li>Do I accept responsibility for the outcomes and results of my team?</li>
+                        
+                            <li>Am I proactive in identifying and resolving the problems and obstacles faced by my team members?</li>
+                        
+                            <li>Do I provide the necessary resources and set explicit expectations for my team members to take on ownership of their roles?</li>
+                        
+                            <li>In what areas of my life do I struggle with taking ownership and being accountable? What might be the underlying reasons for this?</li>
+                        
+                            <li>Do I actively address team members who do not meet expectations or take ownership of their work?</li>
+                        
+                    </ul>
+                    <p class="medium-blue-text">To help you develop in this area, here are some suggestions:</p>
+                    <ul>
+                        
+                            <li>Clearly define your own and your team's goals. Make sure everyone is aware of their responsibilities by clearly outlining them.</li>
+                        
+                            <li>Take complete responsibility for your actions, decisions, and all their consequences. Focus on discovering solutions rather than placing blame on others.</li>
+                        
+                            <li>Get knowledge and insight from your setbacks by considering them to be learning opportunities. Take ownership of your growth and actively seek opportunities to learn.</li>
+                        
+                    </ul>
+                
+                    <h3>Time Management And Prioritization</h3>
+                    <p class="medium-blue-text">Tends to miss deadlines and falls behind schedule as a result of underestimating the time taken to complete the task.</p>
+                    <ul>
+                        
+                            <li>Needs to work on how to deprioritize tasks based on situational demands to meet key deadlines.</li>
+                        
+                            <li>May struggle to understand the difference between urgent and important tasks.</li>
+                        
+                            <li>Find it tough to stay focused on the task at hand and get distracted with other work activities like email.</li>
+                        
+                    </ul>
+                    <p class="medium-blue-text">To help you reflect on your development area, here are few self-reflection questions:</p>
+                    <ul>
+                        
+                            <li>Do I effectively manage my time and set priorities for the timely completion of tasks? Are there any specific things I could do better?</li>
+                        
+                            <li>Am I able to allocate enough of my time and energy to my work priorities, or do I get sidetracked?</li>
+                        
+                            <li>Do I have any habits that make it hard for me to manage my time well?</li>
+                        
+                            <li>Do I tend to take on too many commitments? Do I find it hard to say no? Does it impact the way I spend my time?</li>
+                        
+                            <li>Do I delegate tasks effectively and trust them to complete them? Or do I overextend myself, resulting in time constraints and burnout?</li>
+                        
+                    </ul>
+                    <p class="medium-blue-text">To help you develop in this area, here are some suggestions:</p>
+                    <ul>
+                        
+                            <li>Work with clearly defined goals. Split the bigger tasks into more manageable, smaller pieces.</li>
+                        
+                            <li>Plan and set aside time for various things to do by making a daily or weekly schedule.</li>
+                        
+                            <li>Learn how to say "no" to requests or tasks that aren't critical or don't fit with your priorities.</li>
+                        
+                    </ul>
+                
+            </section>
+        </article>    
+
+    <!-- Disclaimer & Copyright -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h3 style="text-decoration: underline; font-weight: bold; color: #106ba8;" id="page9">Disclaimer and Copyright</h3>
+                <br>
+                <h4 style="font-weight: bold;">Disclaimer</h4>
+                <p>This report is a property of  and the information provided in the report is to be used only by the individual or entity to which it is addressed, else you are hereby notified that any dissemination, distribution or copying of this communication is strictly prohibited. The interpretive information contained in this report should be viewed as only one source of hypotheses about the individual/ group being evaluated. No decisions should be based solely on the information contained in this report. Any interpretation of this report should take into account ALL relevant input, such as real-world experience, skills, interests, abilities, the market being addressed, and the product being sold. This material should be integrated with all other sources of information in reaching professional decisions about this individual. This report is confidential and intended for use by qualified professionals only. </p>
+                <br>
+                <h4 style="font-weight: bold;">Intellectual Property</h4>
+                <p>The Content and Services of , as well as their selection and arrangement, are protected by copyright, trademark, patent, and/or other intellectual property laws, and any unauthorized use of the Content or Services may violate such laws and these Terms of Use. Except as expressly implied in these Terms of Use,  does not grant any express rights to use the Content and/or Services. You have agreed not to copy, republish, frame, download, transmit, modify, rent, lease, loan, sell, assign, distribute, license, sublicense, reverse engineer, or create derivative works based on the Site, its Content, or its Services or their selection and arrangement, except as expressly authorized in these Terms of Use. In addition, you have agreed not to use any data mining, robots, or similar data gathering and extraction methods in connection with the  database.</p>
+            </section>
+        </article>
+
+    </body>
+</html>

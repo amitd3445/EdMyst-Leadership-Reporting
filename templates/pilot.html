@@ -49,7 +49,7 @@
             html {
             color: #393939;
             font-family: Calibri;
-            font-size: 11pt;
+            font-size: 10pt;
             font-weight: 300;
             line-height: 1.25;
             }
@@ -115,8 +115,8 @@
             .custom-link {
             color: rgb(1, 1, 1); 
             text-decoration: none; 
-            font-weight: bold;
             font-size: medium;
+            line-height: 1.75;
             }
 
             .tab {
@@ -142,9 +142,11 @@
             }
 
             .bar-charts {
-            height: 5cm;
-            width: 15cm;
-            margin-left: 1cm;
+            width: 100%;
+            height: auto;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 1cm;
             margin-bottom: 5mm;
             }
 
@@ -173,6 +175,55 @@
             font-weight: bold;
             }
 
+            .front-page-text h3 {
+            color: #106ba8;
+            font-size: 24pt;
+            font-weight: bold;
+            }
+
+            .color-bar {
+                width: 100%;
+                height: auto;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .line-chart {
+                width: 100%;
+                height: auto;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .syled-table {
+                font-family: sans-serif;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+            }
+            
+            .styled-table thead tr {
+                background-color: #009879;
+                color: #ffffff;
+                text-align: left;
+            }
+
+            .styled-table th,
+            .styled-table td {
+                padding: 8px 5px;
+                min-width: 100px; 
+                width: auto; 
+                text-align: center;
+                font-size: smaller;
+            }
+
+            .styled-table tbody tr {
+                border-bottom: 1px solid #EEEFEE;
+            }
+
+            .styled-table tbody tr:nth-of-type(even) {
+                background-color:#EEEFEE;
+            }
+
+
             #header {
             position: fixed;
             top: 0;
@@ -195,7 +246,7 @@
     <body>
 
         <header id="header" style="margin-top: -1.5cm">
-            <p>LEADERSHIP ASSESSMENT REPORT	| {{ dict_candidate['name'] }} | {{ date }}</p>
+            <p>Assessment Report | {{ dict_payload['candidate_profile']['name'] }} | {{ date }}</p>
         </header>
 
     <!-- cover pic -->
@@ -203,10 +254,10 @@
         <article id="cover">
             <section>
                 <div class="front-page-text">
-                    <p>LEADERSHIP ASSESSMENT REPORT</p>
+                    <h3>ASSESSMENT REPORT</h3>
                     <br>
-                    <p>[{{ dict_candidate['name']|upper }}]</p>
-                    <p>[{{ dict_candidate['company_name']|upper }}]</p>
+                    <p>{{ dict_payload['candidate_profile']['name']|upper }}</p>
+                    <p>{{ dict_payload['candidate_profile']['company_name']|upper }}</p>
                     <p>{{ date }}</p>
                 </div>
             </section>
@@ -223,9 +274,10 @@
                     <li><a href="#page3" class="custom-link">FOCUS AREAS</a></li>
                     <li><a href="#page4" class="custom-link">SKILLS</a></li>
                     <li><a href="#page5" class="custom-link">LEADERSHIP SKILLS</a></li>
-                    <li><a href="#page6" class="custom-link">KEY PERFORMANCE STRENGTHS</a></li>
-                    <li><a href="#page7" class="custom-link">KEY IMPROVEMENT OPPORTUNITIES</a></li>
-                    <li><a href="#page8" class="custom-link">DISCLAIMER AND COPYRIGHT</a></li>
+                    <li><a href="#page6" class="custom-link">COMMUNICATION ATTRIBUTES</a></li>
+                    <li><a href="#page7" class="custom-link">KEY PERFORMANCE STRENGTHS</a></li>
+                    <li><a href="#page8" class="custom-link">KEY IMPROVEMENT OPPORTUNITIES</a></li>
+                    <li><a href="#page9" class="custom-link">DISCLAIMER AND COPYRIGHT</a></li>
                 </ul>
             </section>
         </article>
@@ -287,6 +339,14 @@
                 <div class="vertical-flexbox">
                     <img src="../tmp/Architect.jpg" class="bar-charts">
                     <img src="../tmp/Catalyst.jpg" class="bar-charts">
+                </div>
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+                <h2>SKILLS</h2>
+                <div class="vertical-flexbox">
                     <img src="../tmp/Coach.jpg" class="bar-charts">
                     <img src="../tmp/Visionary.jpg" class="bar-charts">
                 </div>
@@ -315,11 +375,250 @@
             </section>
         </article> 
 
+        <!-- Communication Attributes -->
+
+        <article style="page-break-before: always">
+            <section>
+                <h2 id="page6">COMMUNICATION ATTRIBUTES</h2>
+
+                <br>
+                <br>
+                <br>
+                <br>
+                <table class="styled-table" style="border-style: solid; margin-left:auto;margin-right:auto; font-size: small;">
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Summary</th>
+                    </tr>
+                    <tr>
+                        <td>Pace</td>
+                        <td>{{ dict_payload['pace']['measured']['average'] }} words per minute</td>
+                    </tr>
+                    <tr>
+                        <td>Pause</td>
+                        <td>{{ (dict_payload['pause']['inference']['total_pauses']|round(0)|string)[:-2] }} pauses</td>
+                    </tr>
+                    <tr>
+                        <td>Fillers</td>
+                        <td>{{ dict_payload['fillers']['total_words'] }} repititions</td>
+                    </tr>
+                    <tr>
+                        <td>Repeated Words</td>
+                        <td>{{ dict_payload['repeated_words']['total_words'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Eye Contact</td>
+                        <td>{{ dict_payload['eye_contact']['average_percentage'] }}% of the time</td>
+                    </tr>
+                    <tr>
+                        <td>Smile</td>
+                        <td>{{ dict_payload['smile']['average_percentage'] }}% of the time</td>
+                    </tr>
+                    <tr>
+                        <td>Sentiment</td>
+                        <td>{{ dict_payload['sentiment']['assessment'] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Volume</td>
+                        <td>{{ (dict_payload['volume']['inference']['result']['average_power']|round(0)|string )[:-2] }} dB</td>
+                    </tr>
+                </table>
+                
+
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+                <div>
+                    <h3>Pace</h3>
+                    <br>
+                    <h4>Result</h4>
+                    <p>{{ dict_payload['pace']['inference']['message']['result'] }}</p>
+                    <img src="../tmp/pace_colorbar.jpg" class="color-bar">
+                    <h4>Detailed Analysis</h4>
+                    <p>{{ dict_payload['pace']['inference']['message']['inference'] }}</p>
+                    <img src="../tmp/pace_line_chart.jpg" class="line-chart">
+                    <h4>Recommendation</h4>
+                    <p>{{ dict_payload['pace']['inference']['message']['recommendation'] }}</p>
+                </div>
+
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+                <div>
+                    <h3>Pause</h3>
+                    <br>
+                    <h4>Result</h4>
+                    <p>{{ dict_payload['pause']['inference']['result'] }}</p>
+                    <br>
+                    <table class="styled-table" style="border-style: solid; margin-left:auto;margin-right:auto; font-size: small;">
+                        <tr>
+                            <th>Types of Pauses</th>
+                            <th>Duration of Pause</th>
+                            <th>Number of Pauses</th>
+                        </tr>
+                        <tr>
+                            <td>Long Pauses</td>
+                            <td>Greater than 3.5 sec</td>
+                            <td>{{ (dict_payload['pause']['pauses_count_long']['data']['inference']['count']|string)[:-2] }}</td>
+                        </tr>
+                        <tr>
+                            <td>Strategic Pauses</td>
+                            <td>Between 2.5 to 3 sec</td>
+                            <td>{{ (dict_payload['pause']['pauses_count_strategic']['data']['inference']['count']|string)[:-2] }}</td>
+                        </tr>
+                        <tr>
+                            <td>Transition Pauses</td>
+                            <td>Between 1 to 2 sec</td>
+                            <td>{{ (dict_payload['pause']['pauses_count_transition']['data']['inference']['count']|string)[:-2] }}</td>
+                        </tr>
+                        <tr>
+                            <td>Sentence Pauses</td>
+                            <td>Between 0.5 to 1 sec</td>
+                            <td>{{ (dict_payload['pause']['pauses_count_sentence']['data']['inference']['count']|string)[:-2] }}</td>
+                        </tr>
+                        <tr>
+                            <td>Sensory Pauses</td>
+                            <td>Between 0.3 to 0.5 sec</td>
+                            <td>{{ (dict_payload['pause']['pauses_count_sensory']['data']['inference']['count']|string)[:-2] }}</td>
+                        </tr>
+                    </table>
+                    <br>
+                    <img src="../tmp/pauses_stacked_bar_chart.jpg" class="line-chart">
+                    <h4>Detailed Analysis</h4>
+                    <p>{{ dict_payload['pause']['inference']['message'] }}</p>
+                    <h4>Recommendation</h4>
+                    <p>{{ dict_payload['pause']['inference']['recommendation'] }}</p>
+                </div>
+                
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+
+                <div>
+                    <h3>Fillers</h3>
+                    <br>
+                    <h4>Result</h4>
+                    <p>{{ dict_payload['fillers']['result'] }}</p>
+                    <div>
+                        {% if dict_payload['fillers']['data']|length > 0 %}
+                            <h4>Most Used Fillers</h4>
+                            <br>
+                            <table class="styled-table" style="border-style: solid; margin-left:auto;margin-right:auto; font-size: small;">
+                                <tr>
+                                    <th>Word</th>
+                                    <th>Repetitions</th>
+                                </tr>
+                                {% for dict_word_frequency in dict_payload['fillers']['data'] %}
+                                    <tr>
+                                        <td>{{ dict_word_frequency['word'] }}</td>
+                                        <td>{{ dict_word_frequency['count'] }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                            <br>
+                        {% endif %}
+                    </div>
+                    <h4>Detailed Analysis</h4>
+                    <p>{{ dict_payload['fillers']['analysis'] }}</p>
+                    <h4>Recommendation</h4>
+                    <p>{{ dict_payload['fillers']['recommendation'] }}</p>
+                </div>
+
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+
+                <div>
+                    <h3>Repeated Words</h3>
+                    <br>
+                    <h4>Result</h5>
+                    <p>{{ dict_payload['repeated_words']['result'] }}</p>
+                    <div>
+                        {% if dict_payload['repeated_words']['data']|length > 0 %}
+                            <h4>Most Repeated Words</h4>
+                            <br>
+                            <table class="styled-table" style="border-style: solid; margin-left:auto;margin-right:auto; font-size: small;">
+                                <tr>
+                                    <th>Word</th>
+                                    <th>Repetitions</th>
+                                </tr>
+                                {% for dict_word_frequency in dict_payload['repeated_words']['data'] %}
+                                    <tr>
+                                        <td>{{ dict_word_frequency['word'] }}</td>
+                                        <td>{{ dict_word_frequency['count'] }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                            <br>
+                        {% endif %}
+                    </div>
+                    <h4>Detailed Analysis</h4>
+                    <p>{{ dict_payload['repeated_words']['analysis'] }}</p>
+                </div>
+
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+
+                <div>
+                    <h3>Sentiment</h3>
+                    <br>
+                    <h4>Result</h4>
+                    <p>{{ dict_payload['sentiment']['inference']['result'] }}</p>
+                    <img src="../tmp/sentiment_colorbar.jpg" class="color-bar">
+                    <h4>Detailed Analysis</h4>
+                    <p>{{ dict_payload['sentiment']['inference']['message'] }}</p>
+                    <h4>Recommendation</h4>
+                    <p>{{ dict_payload['sentiment']['inference']['recommendation'] }}</p>
+                </div>
+
+                <div>
+                    <h3>Smile</h3>
+                    <br>
+                    <h4>Result</h4>
+                    <p>{{ dict_payload['smile']['result'] }}</p>
+                    <img src="../tmp/smile_colorbar.jpg" class="color-bar">
+                    <h4>Detailed Analysis</h4>
+                    <p>{{ dict_payload['smile']['inference'] }}</p>
+                    <h4>Recommendation</h4>
+                    <p>{{ dict_payload['smile']['recommendation'] }}</p>
+                </div>
+
+            </section>
+        </article> 
+
+        <article style="page-break-before: always">
+            <section>
+
+                <div>
+                    <h3>Volume</h3>
+                    <br>
+                    <h4>Result</h4>
+                    <p>{{ dict_payload['volume']['inference']['result']['message'] }}</p>
+                    <img src="../tmp/volume_colorbar.jpg" class="color-bar">
+                    <h4>Detailed Analysis</h4>
+                    <p>{{ dict_payload['volume']['inference']['message'] }}</p>
+                    <img src="../tmp/volume_line_chart.jpg" class="line-chart">
+                </div>
+
+            </section>
+        </article> 
+
     <!-- Key Performance Strengths -->
 
         <article style="page-break-before: always">
             <section>
-                <h2 id="page6">KEY PERFORMANCE STRENGTHS</h2>
+                <h2 id="page7">KEY PERFORMANCE STRENGTHS</h2>
                 {% for skill in dict_bottom_top_skills['top_skills']|sort %}
                     <h3>{{ skill.title() }}</h3>
                     <p class="medium-blue-text">{{ dict_bottom_top_skills_text['top_skills'][skill]['Performance Strengths'][0] }}</p>
@@ -348,7 +647,7 @@
 
         <article style="page-break-before: always">
             <section>
-                <h2 id="page7">KEY IMPROVEMENT OPPORTUNITIES</h2>
+                <h2 id="page8">KEY IMPROVEMENT OPPORTUNITIES</h2>
                 {% for skill in dict_bottom_top_skills['bottom_skills']|sort %}
                     <h3>{{ skill.title() }}</h3>
                     <p class="medium-blue-text">{{ dict_bottom_top_skills_text['bottom_skills'][skill]['Improvement Opportunities'][0] }}</p>
@@ -377,13 +676,13 @@
 
         <article style="page-break-before: always">
             <section>
-                <h3 style="text-decoration: underline; font-weight: bold; color: #106ba8;" id="page8">Disclaimer and Copyright</h3>
+                <h3 style="text-decoration: underline; font-weight: bold; color: #106ba8;" id="page9">Disclaimer and Copyright</h3>
                 <br>
                 <h4 style="font-weight: bold;">Disclaimer</h4>
-                <p>This report is a property of [{{ dict_candidate['company_name'] }}] and the information provided in the report is to be used only by the individual or entity to which it is addressed, else you are hereby notified that any dissemination, distribution or copying of this communication is strictly prohibited. The interpretive information contained in this report should be viewed as only one source of hypotheses about the individual/ group being evaluated. No decisions should be based solely on the information contained in this report. Any interpretation of this report should take into account ALL relevant input, such as real-world experience, skills, interests, abilities, the market being addressed, and the product being sold. This material should be integrated with all other sources of information in reaching professional decisions about this individual. This report is confidential and intended for use by qualified professionals only. </p>
+                <p>This report is a property of {{ dict_payload['candidate_profile']['company_name'] }} and the information provided in the report is to be used only by the individual or entity to which it is addressed, else you are hereby notified that any dissemination, distribution or copying of this communication is strictly prohibited. The interpretive information contained in this report should be viewed as only one source of hypotheses about the individual/ group being evaluated. No decisions should be based solely on the information contained in this report. Any interpretation of this report should take into account ALL relevant input, such as real-world experience, skills, interests, abilities, the market being addressed, and the product being sold. This material should be integrated with all other sources of information in reaching professional decisions about this individual. This report is confidential and intended for use by qualified professionals only. </p>
                 <br>
                 <h4 style="font-weight: bold;">Intellectual Property</h4>
-                <p>The Content and Services of [{{ dict_candidate['company_name'] }}], as well as their selection and arrangement, are protected by copyright, trademark, patent, and/or other intellectual property laws, and any unauthorized use of the Content or Services may violate such laws and these Terms of Use. Except as expressly implied in these Terms of Use, [{{ dict_candidate['company_name'] }}] does not grant any express rights to use the Content and/or Services. You have agreed not to copy, republish, frame, download, transmit, modify, rent, lease, loan, sell, assign, distribute, license, sublicense, reverse engineer, or create derivative works based on the Site, its Content, or its Services or their selection and arrangement, except as expressly authorized in these Terms of Use. In addition, you have agreed not to use any data mining, robots, or similar data gathering and extraction methods in connection with the [{{ dict_candidate['company_name'] }}] database.</p>
+                <p>The Content and Services of {{ dict_payload['candidate_profile']['company_name'] }}, as well as their selection and arrangement, are protected by copyright, trademark, patent, and/or other intellectual property laws, and any unauthorized use of the Content or Services may violate such laws and these Terms of Use. Except as expressly implied in these Terms of Use, {{ dict_payload['candidate_profile']['company_name'] }} does not grant any express rights to use the Content and/or Services. You have agreed not to copy, republish, frame, download, transmit, modify, rent, lease, loan, sell, assign, distribute, license, sublicense, reverse engineer, or create derivative works based on the Site, its Content, or its Services or their selection and arrangement, except as expressly authorized in these Terms of Use. In addition, you have agreed not to use any data mining, robots, or similar data gathering and extraction methods in connection with the {{ dict_payload['candidate_profile']['company_name'] }} database.</p>
             </section>
         </article>
 
